@@ -7,7 +7,7 @@ volumes:
 services:
     slim:
         image: php:7-alpine
-        working_dir: /var/www
+        working_dir: /back/var/www
         command: php -S 0.0.0.0:8080 -t public
         environment:
             docker: "true"
