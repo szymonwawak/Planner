@@ -13,6 +13,14 @@ return function (ContainerBuilder $containerBuilder) {
         LoggerInterface::class => function (ContainerInterface $c) {
             $settings = $c->get('settings');
 
+            $container['db'] = function ($c) {
+                $settings = $c->get('settings')['db'];
+                $pdo = new PDO("mysql:host=" . $settings['host'] . ";dbname=" . $settings['dbname'],
+                    $settings['user'], $settings['pass']);
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                return $pdo;
+            };
             $loggerSettings = $settings['logger'];
             $logger = new Logger($loggerSettings['name']);
 
@@ -24,5 +32,8 @@ return function (ContainerBuilder $containerBuilder) {
 
             return $logger;
         },
+
     ]);
+
 };
+
