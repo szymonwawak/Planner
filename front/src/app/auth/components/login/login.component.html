@@ -1,0 +1,27 @@
+<div class="wrapper d-flex w-100 h-100">
+  <mat-card class="login-card align-self-center m-auto">
+    <mat-card-header class="login-card-header">
+      <mat-card-title class="login-card-title">Zaloguj się!</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="login-card-content">
+      <form #f="ngForm" (ngSubmit)="f.valid && login()">
+        <mat-form-field>
+          <mat-label>E-mail</mat-label>
+          <input matInput type="email" name="mail" required [(ngModel)]="model.mail" #mail="ngModel">
+          <div *ngIf="(mail.invalid && mail.touched)">
+            <small *ngIf="mail.errors?.required" class="text-danger">Adres jest wymagany</small>
+          </div>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Hasło</mat-label>
+          <input matInput type="password" name="password" required [(ngModel)]="model.password" #password="ngModel">
+          <div *ngIf="(password.invalid && password.touched)">
+            <small *ngIf="password.errors?.required" class="text-danger">Hasło jest wymagane</small>
+          </div>
+        </mat-form-field>
+        <button type="submit" [disabled]="f.invalid" mat-raised-button color="primary">Zaloguj</button>
+        <button type="button" mat-raised-button color="accent" class="float-right" routerLink="">Powrót</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
