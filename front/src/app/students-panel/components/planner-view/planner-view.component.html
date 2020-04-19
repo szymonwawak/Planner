@@ -1,0 +1,24 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="navbar">
+    <span class="mr-auto">Planer konsultacji V1.0</span>
+    <button mat-raised-button color="accent" class="button" routerLink="/login">Zaloguj się</button>
+  </mat-toolbar-row>
+</mat-toolbar>
+<div class="container-fluid mt-5">
+  <div class="info-header col-lg-10 row m-auto">
+    <div class="col-6">
+      <span
+        class="mr-5">Prowadzący: {{lessonModel?.teacher?.name || "--------------------------------"}} {{lessonModel?.teacher?.surname}}</span>
+    </div>
+    <div class="col-6">
+      <span>Przedmiot: {{lessonModel?.subject?.subjectname || "--------------------------------"}}</span>
+    </div>
+  </div>
+  <div class="col-lg-10 row justify-content-between m-auto pt-5">
+    <div class="col-3">
+      <app-search-panel [lessonModel]="lessonModel"></app-search-panel>
+    </div>
+    <div class="col-8">
+    </div>
+  </div>
+</div>
