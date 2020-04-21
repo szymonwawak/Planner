@@ -10,8 +10,12 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from "@angular/material/button";
 import {AuthModule} from "./auth/auth.module";
+import {PlannerViewComponent} from "./students-panel/components/planner-view/planner-view.component";
+import {StudentsPanelModule} from "./students-panel/students-panel.module";
+import {FullCalendarModule} from '@fullcalendar/angular';
 
 const appRoutes: Routes = [
+  {path: 'planner', component: PlannerViewComponent},
   {path: 'calendar', component: CalendarComponent},
   {path: '', component: RoleSelectorComponent, pathMatch: 'full'}
 ]
@@ -29,7 +33,9 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     BrowserAnimationsModule,
     MatGridListModule,
-    MatButtonModule
+    MatButtonModule,
+    StudentsPanelModule,
+    FullCalendarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
