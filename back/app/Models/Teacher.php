@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Teacher extends Model
 {
-	protected $table = 'teacher';
-    public $timestamps = false;
-	protected $fillable =[
+protected $table = 'teacher';
+public $timestamps = false;
+protected $fillable = [
 
-	    'email',
-        'name',
-        'surname',
-        'password'
-    ];
+'email',
+'name',
+'surname',
+'password'
+];
 
 }
