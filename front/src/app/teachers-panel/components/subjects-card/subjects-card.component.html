@@ -1,0 +1,21 @@
+<mat-card class="example-card">
+  <mat-card-header>
+    <mat-card-title>Moje przedmioty:</mat-card-title>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <mat-selection-list [multiple]="false">
+      <mat-list-option>Przedmiot 1</mat-list-option>
+      <mat-list-option>Przedmiot 2</mat-list-option>
+      <mat-list-option>Przedmiot 3</mat-list-option>
+    </mat-selection-list>
+    <div align="end">
+      <button mat-raised-button color="primary" class="m-3">
+        <mat-icon fontSet="material-icons-outlined ">library_add</mat-icon>
+        Dołącz do przedmiotu</button>
+      <button mat-raised-button color="primary">
+        <mat-icon fontSet="material-icons-outlined ">add</mat-icon>
+        Dodaj przedmiot</button>
+    </div>
+  </mat-card-content>
+</mat-card>

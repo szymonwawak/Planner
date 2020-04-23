@@ -13,10 +13,12 @@ import {AuthModule} from "./auth/auth.module";
 import {PlannerViewComponent} from "./students-panel/components/planner-view/planner-view.component";
 import {StudentsPanelModule} from "./students-panel/students-panel.module";
 import {FullCalendarModule} from '@fullcalendar/angular';
+import {PanelViewComponent} from "./teachers-panel/components/panel-view/panel-view.component";
+import {TeachersPanelModule} from "./teachers-panel/teachers-panel.module";
 
 const appRoutes: Routes = [
   {path: 'planner', component: PlannerViewComponent},
-  {path: 'calendar', component: CalendarComponent},
+  {path: 'panel', component: PanelViewComponent},
   {path: '', component: RoleSelectorComponent, pathMatch: 'full'}
 ]
 
@@ -35,6 +37,7 @@ const appRoutes: Routes = [
     MatGridListModule,
     MatButtonModule,
     StudentsPanelModule,
+    TeachersPanelModule,
     FullCalendarModule
   ],
   providers: [],

@@ -13,7 +13,7 @@ import {MatSelectModule} from "@angular/material/select";
 import {FormsModule} from "@angular/forms";
 import {TeacherSearchPipe} from './components/search-panel/teacher-search.pipe';
 import {FullCalendarModule} from "@fullcalendar/angular";
-import { OverlayModule } from '@angular/cdk/overlay';
+import {OverlayModule} from '@angular/cdk/overlay';
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},

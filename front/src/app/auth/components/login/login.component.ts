@@ -10,7 +10,7 @@ import {Router} from "@angular/router";
 export class LoginComponent implements OnInit {
 
   model: LoginViewModel = {
-    mail: '',
+    email: '',
     password: ''
   };
 
@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
         let token: any = res.token;
         if (token) {
           localStorage.setItem('token', token)
-          this.router.navigate(['/calendar'])
+          this.router.navigate(['/panel'])
         }
       },
       err => alert('Wprowadzono błędne dane!')
@@ -35,6 +35,6 @@ export class LoginComponent implements OnInit {
 }
 
 export interface LoginViewModel {
-  mail: string;
+  email: string;
   password: string;
 }
