@@ -57,9 +57,9 @@ $container ['ConsultationController'] = function ($container) {
 
     return new App\Controllers\Api\ConsultationController($container);
 };
-$container ['StudentController'] = function ($container) {
+$container ['ConsultationStudentController'] = function ($container) {
 
-    return new App\Controllers\Api\StudentController($container);
+    return new App\Controllers\Api\ConsultationStudentController($container);
 };
 
 require __DIR__ . '/../app/middleware.php';

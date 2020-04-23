@@ -25,10 +25,8 @@ class TeacherController extends Controller
             $teacher = Teacher::select('id', 'name', 'surname', 'email')->where('id', $id)->get();
             $response->withStatus(201)->getBody()->write($teacher->toJson());
             return $response;
-        } else {
-            return $response->withStatus(403)->getBody()->write("Brak rekordu o podanym id");
         }
-
+        return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
     }
 
 
@@ -36,19 +34,18 @@ class TeacherController extends Controller
     {
         $data = $request->getParsedBody();
         if (Teacher::where('email', '=', $data['email'])->count() > 0) {
-            return $response->withStatus(403)->getBody()->write("Taki email jest zajęty");
-        } else {
-
-            $pass = password_hash($data['password'], PASSWORD_DEFAULT, ['cost' => 10]);
-            $teacher = new Teacher();
-            $teacher->name = $data['name'];
-            $teacher->surname = $data['surname'];
-            $teacher->email = $data['email'];
-            $teacher->password = $pass;
-            $teacher->save();
-
-            return $response->withStatus(201)->getBody()->write($teacher->toJson());
+            return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
         }
+
+        $pass = password_hash($data['password'], PASSWORD_DEFAULT, ['cost' => 10]);
+        $teacher = new Teacher();
+        $teacher->name = $data['name'];
+        $teacher->surname = $data['surname'];
+        $teacher->email = $data['email'];
+        $teacher->password = $pass;
+        $teacher->save();
+
+        return $response->withStatus(201)->getBody()->write($teacher->toJson());
     }
 
     public function delete(Request $request, Response $response, $args)
@@ -59,10 +56,8 @@ class TeacherController extends Controller
             $teacher = Teacher::find($id);
             $teacher->delete();
             return $response->withStatus(200);
-
-        } else {
-            return $response->withStatus(403)->getBody()->write("Brak rekordu o podanym id");
         }
+        return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
     }
 
     public function update(Request $request, Response $response, $args)
@@ -71,18 +66,14 @@ class TeacherController extends Controller
         $data = $request->getParsedBody();
         $teacher = Teacher::find($id);
         if ($teacher->email != $data["email"] && Teacher::where('email', '=', $data['email'])->count() > 0) {
-            return $response->withStatus(403)->getBody()->write("Taki email jest zajęty");
-        } else {
-
-
-            $teacher->name = $data['name'] ?: $teacher->name;
-            $teacher->surname = $data['surname'] ?: $teacher->surname;
-            $teacher->email = $data['email'] ?: $teacher->email;
-
-            $teacher->save();
-
-            return $response->withStatus(201)->getBody()->write($teacher->toJson());
-
+            return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
         }
+        $teacher->name = $data['name'] ?: $teacher->name;
+        $teacher->surname = $data['surname'] ?: $teacher->surname;
+        $teacher->email = $data['email'] ?: $teacher->email;
+
+        $teacher->save();
+
+        return $response->withStatus(201)->getBody()->write($teacher->toJson());
     }
 }

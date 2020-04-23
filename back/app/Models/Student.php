@@ -9,11 +9,11 @@ class Student extends Model
     protected $table = 'consult_student';
     public $timestamps = false;
     protected $fillable = [
-        'studentname',
-        'studentsurname',
-        'studentemail',
-        'starttime',
-        'finishtime',
+        'student_name',
+        'student_surname',
+        'student_email',
+        'start_time',
+        'finish_time',
         'accepted'
     ];
 

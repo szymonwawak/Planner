@@ -43,11 +43,11 @@ $app->group('/api', function () use ($app) {
     });
 
     $app->group('/students', function () use ($app) {
-        $app->get('', 'StudentController:getAll');
-        $app->get('/{id}', "StudentController:getSingle");
-        $app->post('', "StudentController:create");
-        $app->delete('/{id}', "StudentController:delete");
-        $app->put('/{id}', "StudentController:update");
+        $app->get('', 'ConsultationStudentController:getAll');
+        $app->get('/{id}', "ConsultationStudentController:getSingle");
+        $app->post('', "ConsultationStudentController:create");
+        $app->delete('/{id}', "ConsultationStudentController:delete");
+        $app->put('/{id}', "ConsultationStudentController:update");
 
     });
 

@@ -9,9 +9,9 @@ class Consultation extends Model
     protected $table = 'consult_scheme';
     public $timestamps = false;
     protected $fillable = [
-        'consultdate',
-        'starttime',
-        'finishtime'
+        'consult_date',
+        'start_time',
+        'finish_time'
     ];
 
 }
