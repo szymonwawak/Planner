@@ -40,6 +40,27 @@ $container ['Middleware'] = function ($container) {
     return new \App\Middleware\Middleware($container);
 };
 
+$container ['TeacherController'] = function ($container) {
+
+    return new App\Controllers\Api\TeacherController($container);
+};
+
+$container ['SubjectController'] = function ($container) {
+
+    return new App\Controllers\Api\SubjectController($container);
+};
+$container ['LessonController'] = function ($container) {
+
+    return new App\Controllers\Api\LessonController($container);
+};
+$container ['ConsultationController'] = function ($container) {
+
+    return new App\Controllers\Api\ConsultationController($container);
+};
+$container ['ConsultationStudentController'] = function ($container) {
+
+    return new App\Controllers\Api\ConsultationStudentController($container);
+};
 
 require __DIR__ . '/../app/middleware.php';
 require __DIR__ . '/../app/routes.php';

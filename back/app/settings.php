@@ -7,7 +7,7 @@ return [
         'db' => [
             'driver' => 'mysql',
             'host' => 'localhost',
-            'database' => 'consultation',
+            'database' => 'consultations',
             'username' => 'root',
             'password' => '',
             'charset' => 'utf8',
