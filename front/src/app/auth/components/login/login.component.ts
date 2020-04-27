@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
         let token: any = res.token;
         if (token) {
           localStorage.setItem('token', token)
-          this.router.navigate(['/panel'])
+          this.router.navigate(['/panel/dashboard'])
         }
       },
       err => alert('Wprowadzono błędne dane!')

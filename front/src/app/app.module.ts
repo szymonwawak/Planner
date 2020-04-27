@@ -15,10 +15,18 @@ import {StudentsPanelModule} from "./students-panel/students-panel.module";
 import {FullCalendarModule} from '@fullcalendar/angular';
 import {PanelViewComponent} from "./teachers-panel/components/panel-view/panel-view.component";
 import {TeachersPanelModule} from "./teachers-panel/teachers-panel.module";
+import {DashboardComponent} from "./teachers-panel/components/dashboard/dashboard.component";
+import {EmployeesComponent} from "./teachers-panel/components/employees/employees.component";
 
 const appRoutes: Routes = [
   {path: 'planner', component: PlannerViewComponent},
-  {path: 'panel', component: PanelViewComponent},
+  {
+    path: 'panel', component: PanelViewComponent, children: [
+      {path: "", redirectTo: "dashboard", pathMatch: "full"},
+      {path: "dashboard", component: DashboardComponent},
+      {path: "employees", component: EmployeesComponent},
+    ]
+  },
   {path: '', component: RoleSelectorComponent, pathMatch: 'full'}
 ]
 

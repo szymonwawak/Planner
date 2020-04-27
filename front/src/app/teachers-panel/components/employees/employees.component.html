@@ -1,0 +1,74 @@
+<div class="row h-100 justify-content-around p-4">
+  <div class="col-5 h-100">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Pracownicy</mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <mat-selection-list [multiple]="false">
+          <mat-list-option *ngFor="let teacher of teachers"
+                           (click)="setTeacher(teacher)">{{teacher.name}} {{teacher.surname}}</mat-list-option>
+        </mat-selection-list>
+        <div align="end">
+          <button mat-raised-button color="accent" class="m-3" (click)="prepareNewTeacher()">
+            <mat-icon fontSet="material-icons-outlined ">add</mat-icon>
+            Dodaj pracownika
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="col-7">
+    <mat-card>
+      <mat-card-header class="dark-header">
+        <mat-card-title>Dane:</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form>
+          <div class="row justify-content-around">
+            <div class="col-4">
+              <mat-form-field>
+                <mat-label>Imię</mat-label>
+                <input type="text" name="name" matInput [disabled]="disabled" [(ngModel)]="teacher.name">
+              </mat-form-field>
+            </div>
+            <div class="col-4">
+              <mat-form-field>
+                <mat-label>Nazwisko</mat-label>
+                <input type="text" name="surname" matInput [disabled]="disabled" [(ngModel)]="teacher.surname">
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row justify-content-around">
+            <div class="col-4">
+              <mat-form-field>
+                <mat-label>E-mail</mat-label>
+                <input type="email" name="email" matInput [disabled]="disabled" [(ngModel)]="teacher.email">
+              </mat-form-field>
+            </div>
+            <div class="col-4">
+            </div>
+          </div>
+          <div class="subjects" [hidden]="!teacher?.subjects?.length">
+            <p class="my-4"> Zajęcia pracownika:</p>
+            <mat-option *ngFor="let subject of teacher?.subjects"> {{subject.subject_name}}</mat-option>
+          </div>
+          <div align="end">
+            <button mat-raised-button color="primary" class="m-3" (click)="createTeacher()"
+                    [hidden]="teacher?.subjects">
+              <mat-icon fontSet="material-icons-outlined ">done</mat-icon>
+              Zapisz
+            </button>
+            <button mat-raised-button color="warn" class="m-3" (click)="dismissCreating()"
+                    [hidden]="teacher?.subjects">
+              <mat-icon fontSet="material-icons-outlined ">cancel</mat-icon>
+              Anuluj
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

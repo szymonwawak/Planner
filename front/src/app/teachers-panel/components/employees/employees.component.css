@@ -1,0 +1,26 @@
+mat-card {
+  padding: 0;
+}
+
+mat-card-content {
+  padding: 16px 16px 16px 16px;
+}
+mat-card-header {
+  padding-top: 16px;
+  padding-left: 16px;
+  background-color: #9aa8f9;
+}
+
+mat-card-header.dark-header {
+  background-color: #6879c6;
+}
+p {
+  font-size: 20px;
+}
+
+.subject-container {
+  cursor: pointer;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  height: 40px;
+}

@@ -9,17 +9,24 @@ import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatListModule} from "@angular/material/list";
 import {MatIconModule} from "@angular/material/icon";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
-import { IncomingConsultationsComponent } from './components/incoming-consultations/incoming-consultations.component';
+import {IncomingConsultationsComponent} from './components/incoming-consultations/incoming-consultations.component';
 import {MatCardModule} from "@angular/material/card";
-import { SubjectsCardComponent } from './components/subjects-card/subjects-card.component';
-import { ConsultationsScheduleComponent } from './components/consultations-schedule/consultations-schedule.component';
+import {SubjectsCardComponent} from './components/subjects-card/subjects-card.component';
+import {ConsultationsScheduleComponent} from './components/consultations-schedule/consultations-schedule.component';
+import {DashboardComponent} from './components/dashboard/dashboard.component';
+import {EmployeesComponent} from './components/employees/employees.component';
+import {MatInputModule} from "@angular/material/input";
+import {MatOptionModule} from "@angular/material/core";
+import {FormsModule} from "@angular/forms";
 
 const appRoutes: Routes = [
-  {path: 'logout', component: RoleSelectorComponent},
+  {
+    path: 'logout', component: RoleSelectorComponent,
+  },
 ];
 
 @NgModule({
-  declarations: [PanelViewComponent, IncomingConsultationsComponent, SubjectsCardComponent, ConsultationsScheduleComponent],
+  declarations: [PanelViewComponent, IncomingConsultationsComponent, SubjectsCardComponent, ConsultationsScheduleComponent, DashboardComponent, EmployeesComponent],
   imports: [
     CommonModule,
     MatToolbarModule,
@@ -29,7 +36,10 @@ const appRoutes: Routes = [
     MatListModule,
     MatIconModule,
     FontAwesomeModule,
-    MatCardModule
+    MatCardModule,
+    MatInputModule,
+    MatOptionModule,
+    FormsModule
   ]
 })
 export class TeachersPanelModule {
