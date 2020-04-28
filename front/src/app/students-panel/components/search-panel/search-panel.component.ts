@@ -78,4 +78,5 @@ export class Teacher {
 export class Subject {
   id: string;
   subject_name: string;
+  pivot: object;
 }

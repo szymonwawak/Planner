@@ -18,6 +18,14 @@ import {EmployeesComponent} from './components/employees/employees.component';
 import {MatInputModule} from "@angular/material/input";
 import {MatOptionModule} from "@angular/material/core";
 import {FormsModule} from "@angular/forms";
+import {MatDialogModule} from "@angular/material/dialog";
+import {AssignSubjectsDialogComponent} from './components/assign-subjects-dialog/assign-subjects-dialog.component';
+import {MatSelectModule} from "@angular/material/select";
+import { CreateSubjectDialogComponent } from './components/create-subject-dialog/create-subject-dialog.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { PasswordChangeComponent } from './components/password-change/password-change.component';
+import { DeleteAccountComponent } from './components/delete-account/delete-account.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 const appRoutes: Routes = [
   {
@@ -26,7 +34,7 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [PanelViewComponent, IncomingConsultationsComponent, SubjectsCardComponent, ConsultationsScheduleComponent, DashboardComponent, EmployeesComponent],
+  declarations: [PanelViewComponent, IncomingConsultationsComponent, SubjectsCardComponent, ConsultationsScheduleComponent, DashboardComponent, EmployeesComponent, AssignSubjectsDialogComponent, CreateSubjectDialogComponent, SettingsComponent, PasswordChangeComponent, DeleteAccountComponent],
   imports: [
     CommonModule,
     MatToolbarModule,
@@ -39,8 +47,12 @@ const appRoutes: Routes = [
     MatCardModule,
     MatInputModule,
     MatOptionModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatCheckboxModule
   ]
 })
+
 export class TeachersPanelModule {
 }

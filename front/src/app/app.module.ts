@@ -17,6 +17,7 @@ import {PanelViewComponent} from "./teachers-panel/components/panel-view/panel-v
 import {TeachersPanelModule} from "./teachers-panel/teachers-panel.module";
 import {DashboardComponent} from "./teachers-panel/components/dashboard/dashboard.component";
 import {EmployeesComponent} from "./teachers-panel/components/employees/employees.component";
+import {SettingsComponent} from "./teachers-panel/components/settings/settings.component";
 
 const appRoutes: Routes = [
   {path: 'planner', component: PlannerViewComponent},
@@ -25,6 +26,7 @@ const appRoutes: Routes = [
       {path: "", redirectTo: "dashboard", pathMatch: "full"},
       {path: "dashboard", component: DashboardComponent},
       {path: "employees", component: EmployeesComponent},
+      {path: "settings", component: SettingsComponent},
     ]
   },
   {path: '', component: RoleSelectorComponent, pathMatch: 'full'}

@@ -4,18 +4,22 @@
   </mat-card-header>
   <mat-divider></mat-divider>
   <mat-card-content>
-    <mat-selection-list [multiple]="false">
-      <mat-list-option>Przedmiot 1</mat-list-option>
-      <mat-list-option>Przedmiot 2</mat-list-option>
-      <mat-list-option>Przedmiot 3</mat-list-option>
+    <mat-selection-list [multiple]="false" [(ngModel)]=selectedSubject>
+      <mat-list-option *ngFor="let subject of subjects" [value]="subject">{{subject.subject_name}}</mat-list-option>
     </mat-selection-list>
     <div align="end">
-      <button mat-raised-button color="primary" class="m-3">
+      <button mat-raised-button color="warn" class="m-3" [disabled]="!selectedSubject" (click)="removeSubject()">
+        <mat-icon fontSet="material-icons-outlined ">delete</mat-icon>
+        Usuń
+      </button>
+      <button mat-raised-button color="primary" class="m-3" (click)="openSubjectsDialog()">
         <mat-icon fontSet="material-icons-outlined ">library_add</mat-icon>
-        Dołącz do przedmiotu</button>
-      <button mat-raised-button color="primary">
+        Dołącz do przedmiotu
+      </button>
+      <button mat-raised-button color="primary" class="m-3" (click)="openNewSubjectDialog()">
         <mat-icon fontSet="material-icons-outlined ">add</mat-icon>
-        Dodaj przedmiot</button>
+        Dodaj przedmiot
+      </button>
     </div>
   </mat-card-content>
 </mat-card>
