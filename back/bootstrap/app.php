@@ -49,9 +49,9 @@ $container ['SubjectController'] = function ($container) {
 
     return new App\Controllers\Api\SubjectController($container);
 };
-$container ['LessonController'] = function ($container) {
+$container ['TeacherSubjectController'] = function ($container) {
 
-    return new App\Controllers\Api\LessonController($container);
+    return new App\Controllers\Api\TeacherSubjectController($container);
 };
 $container ['ConsultationController'] = function ($container) {
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    protected $table = 'consult_student';
+    protected $table = 'student_consultation';
     public $timestamps = false;
     protected $fillable = [
         'student_name',
@@ -16,5 +16,14 @@ class Student extends Model
         'finish_time',
         'accepted'
     ];
+    protected $hidden=[
+        "pvt"
+    ];
+
+
+    public function consultations(){
+
+        return $this->belongsTo("App\Models\Consultations");
+    }
 
 }

@@ -14,12 +14,17 @@ class AuthController extends Controller
 
     public function login(Request $request, Response $response, $args)
     {
-
         $input = $request->getParsedBody();
         $email = $input['email'];
         $password = $input['password'];
         $teacher = Teacher::where('email', $email)->first();
 
+        $payload = array(
+            "email" => $teacher->email,
+            "userId" => $teacher->id
+
+
+        );
 
         if (!$teacher) {
             return $response->withJson(['error' => true, 'message' => 'Email jest niepoprawny']);
@@ -30,10 +35,20 @@ class AuthController extends Controller
             return $response->withJson(['error' => true, 'message' => 'Hasło jest niepoprawne']);
         }
 
-        $settings = $this->container->get('settings');
-        $token = JWT::encode(['email' => $teacher->email], $settings['jwt']['secret'], "HS256");
 
-        return $response->withJson(['succes' => true, 'token' => $token]);
+        $settings = $this->container->get('settings');
+        $key=$settings['jwt']['secret'];
+        $token = JWT::encode($payload, $key , "HS256");
+
+
+        $array=(['succes' => true, 'token' => $token]);
+
+        if ($teacher->first_login == 1) {
+            $array=(['succes' => true, 'token' => $token, 'forcePasswordChange' => true]);
+        }
+
+
+        return $response->withJson($array);
 
     }
 }
