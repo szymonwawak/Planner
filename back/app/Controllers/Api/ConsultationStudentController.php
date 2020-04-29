@@ -21,12 +21,9 @@ class ConsultationStudentController extends Controller
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        if (Student::where('id', '=', $id)->count() > 0) {
-            $student = Student::where('id', $id)->get();
-            $response->getBody()->write($student->toJson());
-            return $response;
-        }
-            return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        $student = Student::where('id', $id)->get();
+        if ($student->isEmpty()) return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        return  $response->getBody()->write($student->toJson());
     }
 
     public function create(Request $request, Response $response, $args)
@@ -50,14 +47,12 @@ class ConsultationStudentController extends Controller
     public function delete(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        if (Student::where('id', '=', $id)->count() > 0) {
-            $student = Student::where('id', $id);
+        $student = Student::where('id', $id)->first();
+        if ($student != null) {
             $student->delete();
-
             return $response->withStatus(200);
         }
         return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
-
     }
 
     public function update(Request $request, Response $response, $args)

@@ -11,7 +11,15 @@ class Subject extends Model
     public $timestamps = false;
     protected $fillable =[
 
-        'subject_name',
+        'name',
     ];
+    protected  $hidden=[
+        "pvt"
+    ];
+
+    public function teacherSubjects(){
+
+        return $this->hasMany("App\Models\TeacherSubject");
+    }
 
 }

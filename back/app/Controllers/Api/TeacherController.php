@@ -21,28 +21,23 @@ class TeacherController extends Controller
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        if (Teacher::where('id', '=', $id)->count() > 0) {
-            $teacher = Teacher::select('id', 'name', 'surname', 'email')->where('id', $id)->get();
-            $response->withStatus(201)->getBody()->write($teacher->toJson());
-            return $response;
-        }
-        return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        $teacher = Teacher::select('id', 'name', 'surname', 'email')->where('id', $id)->get();
+        if ($teacher->isEmpty()) return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        return $response->withStatus(201)->getBody()->write($teacher->toJson());
     }
 
 
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
-        if (Teacher::where('email', '=', $data['email'])->count() > 0) {
-            return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
-        }
+        if (Teacher::where('email', '=', $data['email'])->count() > 0) return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
 
-        $pass = password_hash($data['password'], PASSWORD_DEFAULT, ['cost' => 10]);
+
         $teacher = new Teacher();
         $teacher->name = $data['name'];
         $teacher->surname = $data['surname'];
         $teacher->email = $data['email'];
-        $teacher->password = $pass;
+        $teacher->password = password_hash('Pa$word1', PASSWORD_DEFAULT, ['cost' => 10]);
         $teacher->save();
 
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
@@ -51,23 +46,22 @@ class TeacherController extends Controller
     public function delete(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-
-        if (Teacher::where('id', '=', $id)->count() > 0) {
-            $teacher = Teacher::find($id);
+        $teacher = Teacher::where('id', $id)->first();
+        if ($teacher != null) {
             $teacher->delete();
             return $response->withStatus(200);
         }
         return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
     }
 
+
     public function update(Request $request, Response $response, $args)
     {
-        $id = $args['id'];
+        $id = Utility::getId($request);
         $data = $request->getParsedBody();
         $teacher = Teacher::find($id);
-        if ($teacher->email != $data["email"] && Teacher::where('email', '=', $data['email'])->count() > 0) {
-            return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
-        }
+        if ($teacher->email != $data["email"] && Teacher::where('email', '=', $data['email'])->count() > 0) return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
+
         $teacher->name = $data['name'] ?: $teacher->name;
         $teacher->surname = $data['surname'] ?: $teacher->surname;
         $teacher->email = $data['email'] ?: $teacher->email;
@@ -75,5 +69,26 @@ class TeacherController extends Controller
         $teacher->save();
 
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
+    }
+
+    public function password(Request $request, Response $response, $args)
+    {
+        $userId = Utility::getId($request);
+        $data = $request->getParsedBody();
+        $password = $data['oldPassword'];
+        $teacher = Teacher::where('id', $userId)->first();
+
+        if (!password_verify( $password, $teacher->password)) {
+            return $response->withStatus(400)->getBody()->write("Stare hasło jest niepoprawne");
+        }
+        if ($data['newPassword'] !=( $data['passwordCheck'])) {
+            return $response->withStatus(400)->getBody()->write("Błędnie powtórzone hasło");
+        }
+        $newPassword = password_hash($data['newPassword'], PASSWORD_DEFAULT, ['cost' => 10]);
+
+        $teacher->password = $newPassword ;
+        $teacher->first_login= '0' ;
+        $teacher->save();
+        return $response->withStatus(200)->write("Hasło zmienione");
     }
 }
