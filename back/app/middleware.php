@@ -1,7 +1,8 @@
 <?php
 return [
     $app->add(new \Tuupola\Middleware\JwtAuthentication([
-        "path" => "/panel",
+
+        "path" => "/api",
         "attribute" => "decoded_token_data",
         "secret" => "secretpass",
         "algorithm" => ["HS256"],

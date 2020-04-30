@@ -2,7 +2,9 @@
 
 namespace App\Controllers;
 
-class Controller
+use App\Controllers\Api\Utils;
+
+class Controller extends  Utils
 {
     protected $container;
 
