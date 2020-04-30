@@ -24,7 +24,8 @@ class TeacherSubjectController extends Controller
     {
         $id = $args['id'];
         $lesson = TeacherSubject::where('id', $id)->get();
-        if ($lesson->isEmpty()) return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        if ($lesson->isEmpty())
+            return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
         return $response->getBody()->write($lesson->toJson());
     }
 
@@ -68,35 +69,40 @@ class TeacherSubjectController extends Controller
 
     public function getUserConsultations(Request $request, Response $response, $args)
     {
-        $userId = $this->getId($request);
-        $items = array();
-        $teacherSubject = TeacherSubject::where('teacher_id', $userId)->get();
+        $userId = Utils::getUserIdfromToken($request);
+        $consultationArray = array();
+        $teacherSubjects = TeacherSubject::where('teacher_id', $userId)->get();
 
-        foreach ($teacherSubject as $c) {
-            $items[] = $c->consultations;
+        foreach ($teacherSubjects as $teacherSubject) {
+            $consultationArray[] = $teacherSubject->consultations;
         }
-        $myJSON = json_encode($items);
-        return $response->withStatus(201)->getBody()->write($myJSON);
+        $userConsultations = json_encode($consultationArray);
+        return $response->withStatus(201)->getBody()->write($userConsultations);
     }
+
 
     public function getStudentConsultations(Request $request, Response $response, $args)
     {
-        $userId = Utility::getId($request);
-        $items = array();
-        $items1 = array();
+        $userId = Utils::getUserIdfromToken($request);
+        $consultationArray = array();
+        $studentConsultationArray = array();
         $data = $request->getParsedBody();
-        $teacherSubject = TeacherSubject::where('teacher_id', $userId)->whereHas('consultations', function ($query) use ($data) {
+        $teacherSubjects = TeacherSubject::where('teacher_id', $userId)->whereHas('consultation', function ($query) use ($data) {
             $query->where('start_date', '>', $data['start_date'])->where('end_date', '<', $data['end_date']);
         })->get();
 
-        foreach ($teacherSubject as $c) {
-            $items[] = $c->consultations;
+        foreach ($teacherSubjects as $teacherSubject) {
+            $consultationArray[] = $teacherSubject->consultation;
+            $consultationCollects = $teacherSubject->consultation;
+            foreach ($consultationCollects as $consultationCollect) {
+                $studentConsultationArray[] = $consultationCollect->studentConsultation;
+            }
         }
-        foreach ($items as $c) {
-            $items1[] = $c->consultations->sstudentConsultations;
-        }
-        $myJSON = json_encode($items1);
-        return $response->withStatus(201)->getBody()->write($myJSON);
+        $studentConsultations = json_encode($studentConsultationArray);
+
+        $consultations = json_encode($consultationArray);
+
+        return $response->withStatus(201)->getBody()->write($consultations, $studentConsultations);
     }
 }
 

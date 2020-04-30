@@ -15,7 +15,7 @@ class TeacherSubject extends Model
         "pvt"
     ];
 
-    public function consultations(){
+    public function consultation(){
 
         return $this->hasMany("App\Models\Consultation");
     }

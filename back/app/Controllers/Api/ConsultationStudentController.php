@@ -6,7 +6,7 @@ namespace App\Controllers\Api;
 use App\Controllers\Controller;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use App\Models\Student;
+use App\Models\StudentConsultation;
 
 
 class ConsultationStudentController extends Controller
@@ -15,29 +15,35 @@ class ConsultationStudentController extends Controller
     public function getAll(Request $request, Response $response)
     {
 
-        return $response->getBody()->write(Student::all()->toJson());
+        return $response->getBody()->write(StudentConsultation::all()->toJson());
     }
 
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $student = Student::where('id', $id)->get();
-        if ($student->isEmpty()) return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
-        return  $response->getBody()->write($student->toJson());
+        $student = StudentConsultation::where('id', $id)->get();
+        if ($student->isEmpty())
+            return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        return $response->getBody()->write($student->toJson());
     }
 
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
-        $student = new Student();
+        $student = new StudentConsultation();
+       $x= StudentConsultation::where('consultation_id',$data['consultation_id'])->whereBetween('start_time',[$data['start_time'],$data['finish_time']] )->whereBetween('finish_time',[$data['finish_time'],$data['start_time']] )->count() ;
+            var_dump($x);
 
-        $student->idconsult = $data['idconsult'];
+
+        die();
+           // ->count() > 0
+        $student->idconsult = $data['consultation_id'];
         $student->student_name = $data['student_name'];
         $student->student_surname = $data['student_surname'];
         $student->student_email = $data['student_email'];
         $student->start_time = $data['start_time'];
         $student->finish_time = $data['finish_time'];
-        $student->accepted = $data['accepted'];
+        $student->accepted =0;
 
         $student->save();
 
@@ -47,7 +53,7 @@ class ConsultationStudentController extends Controller
     public function delete(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $student = Student::where('id', $id)->first();
+        $student = StudentConsultation::where('id', $id)->first();
         if ($student != null) {
             $student->delete();
             return $response->withStatus(200);
@@ -59,7 +65,7 @@ class ConsultationStudentController extends Controller
     {
         $id = $args['id'];
         $data = $request->getParsedBody();
-        $student = Student::where('id', $id);
+        $student = StudentConsultation::where('id', $id);
 
         $student->student_name = $data['student_name'] ?: $student->student_name;
         $student->student_surname = $data['student_surname'] ?: $student->student_surname;
