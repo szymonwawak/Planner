@@ -14,15 +14,16 @@ class TeacherController extends Controller
 
     public function getAll(Request $request, Response $response)
     {
-        $teacher = Teacher::select('id', 'name', 'surname', 'email')->get();
+        $teacher = Teacher::all();
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
     }
 
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $teacher = Teacher::select('id', 'name', 'surname', 'email')->where('id', $id)->get();
-        if ($teacher->isEmpty()) return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        $teacher = Teacher::where('id', $id)->get();
+        if ($teacher->isEmpty())
+            return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
     }
 
@@ -30,14 +31,15 @@ class TeacherController extends Controller
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
-        if (Teacher::where('email', '=', $data['email'])->count() > 0) return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
+        if (Teacher::where('email', '=', $data['email'])->count() > 0)
+            return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
 
 
         $teacher = new Teacher();
         $teacher->name = $data['name'];
         $teacher->surname = $data['surname'];
         $teacher->email = $data['email'];
-        $teacher->password = password_hash('Pa$word1', PASSWORD_DEFAULT, ['cost' => 10]);
+        $teacher->password = password_hash('Pa$$word1', PASSWORD_DEFAULT, ['cost' => 10]);
         $teacher->save();
 
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
@@ -57,10 +59,11 @@ class TeacherController extends Controller
 
     public function update(Request $request, Response $response, $args)
     {
-        $id = Utility::getId($request);
+        $id = Utils::getUserIdfromToken($request);
         $data = $request->getParsedBody();
         $teacher = Teacher::find($id);
-        if ($teacher->email != $data["email"] && Teacher::where('email', '=', $data['email'])->count() > 0) return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
+        if ($teacher->email != $data["email"] && Teacher::where('email', '=', $data['email'])->count() > 0)
+            return $response->withStatus(400)->getBody()->write("Taki email jest zajęty");
 
         $teacher->name = $data['name'] ?: $teacher->name;
         $teacher->surname = $data['surname'] ?: $teacher->surname;
@@ -71,9 +74,9 @@ class TeacherController extends Controller
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
     }
 
-    public function password(Request $request, Response $response, $args)
+    public function changePassword(Request $request, Response $response, $args)
     {
-        $userId = Utility::getId($request);
+        $userId = Utils::getUserIdfromToken($request);
         $data = $request->getParsedBody();
         $password = $data['oldPassword'];
         $teacher = Teacher::where('id', $userId)->first();

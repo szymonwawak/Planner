@@ -14,12 +14,11 @@ class Teacher extends Model
         'email',
         'name',
         'surname',
-        'password',
         'first_login'
     ];
     protected  $hidden=[
         'password',
-        "pvt"
+
     ];
 
     public function teacherSubjects(){

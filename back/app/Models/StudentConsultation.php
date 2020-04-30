@@ -4,7 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class Student extends Model
+class StudentConsultation extends Model
 {
     protected $table = 'student_consultation';
     public $timestamps = false;
@@ -21,9 +21,9 @@ class Student extends Model
     ];
 
 
-    public function consultations(){
+    public function consultation(){
 
-        return $this->belongsTo("App\Models\Consultations");
+        return $this->belongsTo("App\Models\Consultation");
     }
 
 }

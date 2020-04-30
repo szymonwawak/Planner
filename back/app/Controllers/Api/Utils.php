@@ -8,10 +8,10 @@ use App\Models\TeacherSubject;
 use Firebase\JWT\JWT;
 
 
-class Utility
+class Utils
 {
 
-    public function getId($request)
+    public function getUserIdfromToken($request)
     {
         $authHeader = $request->getHeader('authorization');
         $str = json_encode($authHeader);

@@ -4,13 +4,21 @@ namespace App\Controllers\Api;
 
 
 use App\Controllers\Controller;
+use App\Models\TeacherSubject;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Models\Consultation;
 use Firebase\JWT\JWT;
+use function MongoDB\BSON\toJSON;
 
 class ConsultationController extends Controller
 {
+    public function getTeacherStudentId($request)
+    {
+        $userId = Utils::getUserIdfromToken($request);
+        $teacherSubjectID = TeacherSubject::select('id')->where('teacher_id', $userId)->get();
+        return $teacherSubjectID;
+    }
 
     public function getAll(Request $request, Response $response)
     {
@@ -29,6 +37,7 @@ class ConsultationController extends Controller
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
+
 
         $consult = new Consultation();
         $consult->day = $data['day'];
@@ -74,28 +83,42 @@ class ConsultationController extends Controller
     public function getConsultations(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
-        $items = array();
-        $consult = Consultation::where('start_date', '>' ,$data['start_date'] )->where('end_date','<',$data['end_date'])->where('teacher_subject_id',$data['teacher_subject_id'])->get();
-
-        foreach ($consult as $c) {
-            $items[] = $c;
+        $consultationsArray = array();
+        $userId = Utils::getUserIdfromToken($request);
+        if (!$data["teacher_id"] == null) {
+            $userId = $data["teacher_id"];
         }
-        $myJSON = json_encode($items);
-        return $response->withStatus(201)->getBody()->write($myJSON);
-    }
+        $consultations = Consultation::where('start_date', '>', $data['start_date'])->where('end_date', '<', $data['end_date'])->whereHas('teacherSubject', function ($query) use ($userId) {
+            $query->where("teacher_subject_id", $userId);
+        })->get();
 
+        foreach ($consultations as $consultation) {
+            $consultationsArray[] = $consultation;
+        }
+        $userConsultations = json_encode($consultationsArray);
+        return $response->withStatus(201)->getBody()->write($userConsultations);
+    }
 
 
     public function getStudentConsultations(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
-        $items = array();
-        $consult = Consultation::where('start_date', '>' ,$data['start_date'] )->where('end_date','<',$data['end_date'])->where('teacher_subject_id',$data['teacher_subject_id'])->get();
-
-        foreach ($consult as $c) {
-            $items[] = $c->studentConsultations;
+        $studentConsultationsArray = array();
+        $userId = Utils::getUserIdfromToken($request);
+        if (!$data["teacher_id"] == null) {
+            $userId = $data["teacher_id"];
         }
-        $myJSON = json_encode($items);
-        return $response->withStatus(201)->getBody()->write($myJSON);
+
+        $consultations = Consultation::where('start_date', '>', $data['start_date'])->where('end_date', '<', $data['end_date'])->whereHas('teacherSubject', function ($query) use ($userId) {
+            $query->where("teacher_subject_id", $userId);
+        })->get();
+
+
+        foreach ($consultations as $consultation) {
+            $studentConsultationsArray[] = $consultation->studentConsultations;
+        }
+
+        $studentConsultations = json_encode($studentConsultationsArray);
+        return $response->withStatus(201)->getBody()->write($studentConsultations);
     }
 }

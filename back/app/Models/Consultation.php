@@ -19,13 +19,13 @@ class Consultation extends Model
         "pvt"
     ];
 
-    public function teacherSubjects(){
+    public function teacherSubject(){
 
         return $this->belongsTo("App\Models\TeacherSubject");
     }
-    public function studentConsultations(){
+    public function studentConsultation(){
 
-        return $this->hasMany("App\Models\Student");
+        return $this->hasMany("App\Models\StudentConsultation");
     }
 
 }
