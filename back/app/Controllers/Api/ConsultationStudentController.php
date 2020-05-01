@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 
 use App\Controllers\Controller;
+use App\Models\Teacher;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Models\StudentConsultation;
@@ -30,13 +31,18 @@ class ConsultationStudentController extends Controller
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
-        $student = new StudentConsultation();
-       $x= StudentConsultation::where('consultation_id',$data['consultation_id'])->whereBetween('start_time',[$data['start_time'],$data['finish_time']] )->whereBetween('finish_time',[$data['finish_time'],$data['start_time']] )->count() ;
-            var_dump($x);
-
-
+        if ($data['start_time'] >= $data['finish_time'])
+            return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
+        if (StudentConsultation::where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->count() > 0) {
+            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny1");
+        }
+        if (StudentConsultation::where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->count() > 0) {
+            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny2");
+        }
+    var_dump("ok");
         die();
-           // ->count() > 0
+
+        $student = new StudentConsultation();
         $student->idconsult = $data['consultation_id'];
         $student->student_name = $data['student_name'];
         $student->student_surname = $data['student_surname'];
@@ -52,8 +58,8 @@ class ConsultationStudentController extends Controller
 
     public function delete(Request $request, Response $response, $args)
     {
-        $id = $args['id'];
-        $student = StudentConsultation::where('id', $id)->first();
+            $userId=$this->getUserIdfromToken($request);
+        $student = StudentConsultation::where('id', $userId)->first();
         if ($student != null) {
             $student->delete();
             return $response->withStatus(200);
@@ -79,5 +85,8 @@ class ConsultationStudentController extends Controller
 
         return $response->withStatus(201)->getBody()->write($student->toJson());
     }
+
+
+
 }
 

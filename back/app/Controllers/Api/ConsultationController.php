@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 
 use App\Controllers\Controller;
 use App\Models\TeacherSubject;
+use DateTime;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Models\Consultation;
@@ -13,12 +14,6 @@ use function MongoDB\BSON\toJSON;
 
 class ConsultationController extends Controller
 {
-    public function getTeacherStudentId($request)
-    {
-        $userId = Utils::getUserIdfromToken($request);
-        $teacherSubjectID = TeacherSubject::select('id')->where('teacher_id', $userId)->get();
-        return $teacherSubjectID;
-    }
 
     public function getAll(Request $request, Response $response)
     {
@@ -29,7 +24,8 @@ class ConsultationController extends Controller
     {
         $id = $args['id'];
         $consult = Consultation::where('id', $id)->get();
-        if ($consult->isEmpty()) return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        if ($consult->isEmpty())
+            return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
         return $response->getBody()->write($consult->toJson());
 
     }
@@ -37,7 +33,24 @@ class ConsultationController extends Controller
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
+        if ($data['start_time'] >= $data['finish_time'])
+            return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
 
+        $startTime = new DateTime($data['start_time']);
+        $endTime = new DateTime($data['finish_time']);
+        $timeDifference = $endTime->getTimestamp() - $startTime->getTimestamp();
+        if ($timeDifference > 3600)
+            return $response->withStatus(400)->getBody()->write("Czas konsultacji nie może przekraczać jednej godziny.");
+
+        if (Consultation::where('day', '=', $data['day'])->count() > 0) {
+            if (Consultation::where('day', '=', $data['day'])->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->count() > 0) {
+                return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+            }
+            if (Consultation::where('day', '=', $data['day'])->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->count() > 0) {
+                return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+            }
+
+        }
 
         $consult = new Consultation();
         $consult->day = $data['day'];

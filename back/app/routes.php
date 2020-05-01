@@ -14,7 +14,7 @@ $app->group('/api', function () use ($app) {
         $app->get('', "TeacherController:getAll");
         $app->get('/{id}', "TeacherController:getSingle");
         $app->post('', "TeacherController:create");
-        $app->delete('/{id}', "TeacherController:delete");
+        $app->delete('', "TeacherController:delete");
         $app->put('', "TeacherController:update");
     });
 
