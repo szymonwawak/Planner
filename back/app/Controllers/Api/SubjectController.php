@@ -23,7 +23,7 @@ class SubjectController extends Controller
         $subject = Subject::select('id', 'name')->where('id', $id)->get();
         if ($subject->isEmpty())
             return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
-        return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        return $response->withStatus(201)->getBody()->write($subject->toJson());
     }
 
     public function create(Request $request, Response $response, $args)

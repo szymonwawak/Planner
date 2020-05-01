@@ -28,7 +28,7 @@ class Utils
     public function sendEmail(Request $request, Response $response)
     {
         $data = $request->getParsedBody();
-        //$to=$data["email"];
+        //$to=$data["student_email"];
         $to = 'no.replay.konsultacje@gmail.com';
         $userName = Teacher::select('name', 'surname')->where('id', $this->getUserIdfromToken($request))->first();
         $studentConsultation = StudentConsultation::select("start_time", "finish_time")->where('id', $data['id'])->first();

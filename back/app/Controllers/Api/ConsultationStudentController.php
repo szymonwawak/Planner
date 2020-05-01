@@ -39,11 +39,10 @@ class ConsultationStudentController extends Controller
         if (StudentConsultation::where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->count() > 0) {
             return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny2");
         }
-    var_dump("ok");
-        die();
 
         $student = new StudentConsultation();
-        $student->idconsult = $data['consultation_id'];
+        $student->data = $data['data'];
+        $student->consultation_id = $data['consultation_id'];
         $student->student_name = $data['student_name'];
         $student->student_surname = $data['student_surname'];
         $student->student_email = $data['student_email'];
@@ -72,14 +71,37 @@ class ConsultationStudentController extends Controller
         $id = $args['id'];
         $data = $request->getParsedBody();
         $student = StudentConsultation::where('id', $id);
+        $startTimeTemp = $student->start_time;
+        $finishTimeTemp = $student->finish_time;
+        if (!($student->start_time == $data['start_time'] && $student->finish_time == $data['finish_time'])) {
+
+        }
+        if ($data['start_time'] >= $data['finish_time'])
+            return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
+        $student->start_time = '00:00:00';
+        $student->finish_time = '00:00:00';
+        $student->save();
+        if (StudentConsultation::where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->count() > 0) {
+            $student->start_time = $startTimeTemp;
+            $student->finish_time = $finishTimeTemp;
+            $student->save();
+            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny1");
+        }
+        if (StudentConsultation::where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->count() > 0) {
+            $student->start_time = $startTimeTemp;
+            $student->finish_time = $finishTimeTemp;
+            $student->save();
+            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny2");
+        }
 
         $student->student_name = $data['student_name'] ?: $student->student_name;
         $student->student_surname = $data['student_surname'] ?: $student->student_surname;
-        $student->student_email = $data['student_email'] ?: $student->student_email = $data;
-        $student->start_time = $data['start_time'] ?: $student->start_time = $data;
-        $student->finish_time = $data['finish_time'] ?: $student->finish_time = $data;
+        $student->student_email = $data['student_email'] ?: $student->student_email ;
+        $student->start_time = $data['start_time'] ?: $student->start_time ;
+        $student->finish_time = $data['finish_time'] ?: $student->finish_time ;
         $student->accepted = $data['accepted'] ?: $student->accepted = $data;
-        $student->idconsult = $data['idconsult'] ?: $student->idconsult = $data;
+        $student->consultation_id = $data['consultation_id'] ?: $student->consultation_id ;
+        $student->data = $data['data'] ?: $student->data;
 
         $student->save();
 

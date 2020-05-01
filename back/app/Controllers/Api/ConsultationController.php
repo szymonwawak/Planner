@@ -49,7 +49,6 @@ class ConsultationController extends Controller
             if (Consultation::where('day', '=', $data['day'])->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->count() > 0) {
                 return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
             }
-
         }
 
         $consult = new Consultation();
@@ -79,7 +78,39 @@ class ConsultationController extends Controller
     {
         $id = $args['id'];
         $data = $request->getParsedBody();
-        $consult = Consultation::where('id', $id);
+        $consult = Consultation::find($id);
+        $startTimeTemp = $consult->start_time;
+        $finishTimeTemp = $consult->finish_time;
+        if (!($consult->start_time == $data['start_time'] && $consult->finish_time == $data['finish_time'])) {
+
+
+            if ($data['start_time'] >= $data['finish_time'])
+                return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
+
+            $startTime = new DateTime($data['start_time']);
+            $endTime = new DateTime($data['finish_time']);
+            $timeDifference = $endTime->getTimestamp() - $startTime->getTimestamp();
+            if ($timeDifference > 3600)
+                return $response->withStatus(400)->getBody()->write("Czas konsultacji nie może przekraczać jednej godziny.");
+
+            if (Consultation::where('day', '=', $data['day'])->count() > 0) {
+                $consult->start_time = '00:00:00';
+                $consult->finish_time = '00:00:00';
+                $consult->save();
+                if (Consultation::where('day', '=', $data['day'])->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->count() > 0) {
+                    $consult->start_time = $startTimeTemp;
+                    $consult->finish_time = $finishTimeTemp;
+                    $consult->save();
+                    return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+                }
+                if (Consultation::where('day', '=', $data['day'])->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->count() > 0) {
+                    $consult->start_time = $startTimeTemp;
+                    $consult->finish_time = $finishTimeTemp;
+                    $consult->save();
+                    return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+                }
+            }
+        }
 
         $consult->day = $data['day'] ?: $consult->day;
         $consult->start_date = $data['start_date'] ?: $consult->start_date;

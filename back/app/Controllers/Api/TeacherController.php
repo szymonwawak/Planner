@@ -40,6 +40,7 @@ class TeacherController extends Controller
         $teacher->surname = $data['surname'];
         $teacher->email = $data['email'];
         $teacher->password = password_hash('Pa$$word1', PASSWORD_DEFAULT, ['cost' => 10]);
+        $teacher->first_login= '1' ;
         $teacher->save();
 
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
