@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 
 use App\Controllers\Controller;
+use App\Models\Teacher;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Models\Subject;
@@ -61,19 +62,13 @@ class SubjectController extends Controller
 
         return $response->withStatus(201)->getBody()->write($subject->toJson());
     }
+
     public function getUserSubjects(Request $request, Response $response, $args)
     {
-        $userId = Utils::getUserIdfromToken($request);
-        $subjectArray = array();
-        $subjects = Subject::whereHas('teacherSubjects', function ($query) use ($userId) {
-            $query->where('teacher_id',$userId);
-        })->get();
-
-        foreach ($subjects as $subject) {
-            $subjectArray[] = $subject;
-        }
-        $userSubjects= json_encode($subjectArray);
-        return $response->withStatus(201)->getBody()->write($userSubjects);
+        $userId = Utils::getUserIdFromToken($request);
+        $teacher = Teacher::find($userId);
+        $teacherSubjects = json_encode($teacher->subjects);
+        return $response->withStatus(201)->getBody()->write($teacherSubjects);
     }
 }
 

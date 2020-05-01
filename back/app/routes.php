@@ -27,16 +27,16 @@ $app->group('/api', function () use ($app) {
         $app->post('', "SubjectController:create");
         $app->delete('/{id}', "SubjectController:delete");
         $app->put('/{id}', "SubjectController:update");
-
     });
 
     $app->group('/teacherSubjects', function () use ($app) {
         $app->group('/studentConsultations', function () use ($app) {
-            $app->get('', 'TeacherSubjectController:getStudentConsultations');
+            $app->post('', 'TeacherSubjectController:getStudentConsultations');
         });
         $app->get('', 'TeacherSubjectController:getUserConsultations');
         $app->get('/{id}', "TeacherSubjectController:getSingle");
         $app->post('', "TeacherSubjectController:create");
+        $app->post('/addToCurrent', "TeacherSubjectController:assignSubjectToCurrentlyLoggedTeacher");
         $app->delete('/{id}', "TeacherSubjectController:delete");
         $app->put('/{id}', "TeacherSubjectController:update");
 

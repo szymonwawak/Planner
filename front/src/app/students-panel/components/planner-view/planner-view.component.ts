@@ -2,10 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild, ViewContainerRef} from '@angul
 import {Subject, Teacher} from "../search-panel/search-panel.component";
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import {FullCalendarComponent} from "@fullcalendar/angular";
 import {CdkOverlayOrigin, ConnectedPositionStrategy, Overlay, OverlayConfig, OverlayRef} from '@angular/cdk/overlay';
-import { TemplatePortalDirective, ComponentPortal } from '@angular/cdk/portal';
-import {CalendarOverlayComponent} from "../calendar-overlay/calendar-overlay.component";
 
 @Component({
   selector: 'app-planner-view',

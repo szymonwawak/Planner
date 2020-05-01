@@ -14,7 +14,7 @@ class TeacherController extends Controller
 
     public function getAll(Request $request, Response $response)
     {
-        $teacher = Teacher::all();
+        $teacher = Teacher::with('subjects')->get();
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
     }
 
@@ -59,7 +59,7 @@ class TeacherController extends Controller
 
     public function update(Request $request, Response $response, $args)
     {
-        $id = Utils::getUserIdfromToken($request);
+        $id = Utils::getUserIdFromToken($request);
         $data = $request->getParsedBody();
         $teacher = Teacher::find($id);
         if ($teacher->email != $data["email"] && Teacher::where('email', '=', $data['email'])->count() > 0)
@@ -76,7 +76,7 @@ class TeacherController extends Controller
 
     public function changePassword(Request $request, Response $response, $args)
     {
-        $userId = Utils::getUserIdfromToken($request);
+        $userId = Utils::getUserIdFromToken($request);
         $data = $request->getParsedBody();
         $password = $data['oldPassword'];
         $teacher = Teacher::where('id', $userId)->first();

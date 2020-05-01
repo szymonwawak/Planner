@@ -41,7 +41,7 @@ export class SubjectsCardComponent implements OnInit {
   }
 
   initElement(): void {
-    this.apiService.getAllSubjects().subscribe(
+    this.apiService.getCurrentUserSubjects().subscribe(
       res => {
         this.subjects = res;
       },
@@ -52,10 +52,11 @@ export class SubjectsCardComponent implements OnInit {
   }
 
   removeSubject(): void {
-    this.apiService.deleteCurrentlyLoggedTeacherSubject(this.selectedSubject).subscribe(
+    this.apiService.deleteTeacherSubject(this.selectedSubject[0].pivot.id).subscribe(
       res => {
         this.subjects = this.subjects.filter(obj => obj != this.selectedSubject);
         this.selectedSubject = null;
+        this.initElement();
       },
       err => {
         alert("Wystąpił błąd");

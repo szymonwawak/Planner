@@ -4,18 +4,26 @@
   </mat-card-header>
   <mat-divider></mat-divider>
   <mat-card-content>
-    <mat-selection-list [multiple]="false">
-      <mat-list-option>Konsultacja 1</mat-list-option>
-      <mat-list-option>Konsultacja 2</mat-list-option>
-      <mat-list-option>Konsultacja 3</mat-list-option>
+    <mat-selection-list [multiple]="false" [(ngModel)]="studentsConsultation">
+      <mat-list-option [value]="studentsConsultation" *ngFor="let studentsConsultation of studentsConsultations">
+        Przedmiot: {{studentsConsultation.subject.name}}
+        Imię i nazwisko studenta: {{studentsConsultation.student_name}} {{studentsConsultation.student_surname}}
+        <br> Data: {{studentsConsultation.date}} Email: {{studentsConsultation.student_email}}
+        Godziny: {{studentsConsultation.start_time}} - {{studentsConsultation.finish_time}}
+        Status: {{studentsConsultation.accepted}}
+      </mat-list-option>
     </mat-selection-list>
     <div align="end">
-      <button mat-raised-button color="primary" class="m-3" disabled>
+      <button mat-raised-button color="primary" class="m-3" [disabled]="!studentsConsultation"
+              (click)="acceptConsultation()">
         <mat-icon fontSet="material-icons-outlined">done</mat-icon>
-        Zaakceptuj konsultację</button>
-      <button mat-raised-button color="accent" disabled>
+        Zaakceptuj konsultację
+      </button>
+      <button mat-raised-button color="accent" [disabled]="!studentsConsultation"
+              (click)="openEditConsultationDialog()">
         <mat-icon fontSet="material-icons-outlined ">create</mat-icon>
-        Zmień termin</button>
+        Zmień termin
+      </button>
     </div>
   </mat-card-content>
 </mat-card>

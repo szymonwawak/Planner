@@ -15,7 +15,7 @@ class ConsultationController extends Controller
 {
     public function getTeacherStudentId($request)
     {
-        $userId = Utils::getUserIdfromToken($request);
+        $userId = Utils::getUserIdFromToken($request);
         $teacherSubjectID = TeacherSubject::select('id')->where('teacher_id', $userId)->get();
         return $teacherSubjectID;
     }
@@ -37,8 +37,6 @@ class ConsultationController extends Controller
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
-
-
         $consult = new Consultation();
         $consult->day = $data['day'];
         $consult->end_date = $data['end_date'];
@@ -84,16 +82,17 @@ class ConsultationController extends Controller
     {
         $data = $request->getParsedBody();
         $consultationsArray = array();
-        $userId = Utils::getUserIdfromToken($request);
+        $userId = Utils::getUserIdFromToken($request);
         if (!$data["teacher_id"] == null) {
             $userId = $data["teacher_id"];
         }
-        $consultations = Consultation::where('start_date', '>', $data['start_date'])->where('end_date', '<', $data['end_date'])->whereHas('teacherSubject', function ($query) use ($userId) {
-            $query->where("teacher_subject_id", $userId);
+        $consultations = Consultation::whereHas('teacherSubject', function ($query) use ($userId) {
+            $query->where("teacher_id", $userId);
         })->get();
 
         foreach ($consultations as $consultation) {
-            $consultationsArray[] = $consultation;
+            $subject = $consultation->teacherSubject->subject;
+            $consultationsArray[] = $consultation->setAttribute('subject', $subject);
         }
         $userConsultations = json_encode($consultationsArray);
         return $response->withStatus(201)->getBody()->write($userConsultations);
@@ -104,12 +103,12 @@ class ConsultationController extends Controller
     {
         $data = $request->getParsedBody();
         $studentConsultationsArray = array();
-        $userId = Utils::getUserIdfromToken($request);
+        $userId = Utils::getUserIdFromToken($request);
         if (!$data["teacher_id"] == null) {
             $userId = $data["teacher_id"];
         }
 
-        $consultations = Consultation::where('start_date', '>', $data['start_date'])->where('end_date', '<', $data['end_date'])->whereHas('teacherSubject', function ($query) use ($userId) {
+        $consultations = Consultation::whereHas('teacherSubject', function ($query) use ($userId) {
             $query->where("teacher_subject_id", $userId);
         })->get();
 

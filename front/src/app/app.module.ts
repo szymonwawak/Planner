@@ -18,6 +18,8 @@ import {TeachersPanelModule} from "./teachers-panel/teachers-panel.module";
 import {DashboardComponent} from "./teachers-panel/components/dashboard/dashboard.component";
 import {EmployeesComponent} from "./teachers-panel/components/employees/employees.component";
 import {SettingsComponent} from "./teachers-panel/components/settings/settings.component";
+import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {JWTInterceptor} from "./shared/jwt.interceptor";
 
 const appRoutes: Routes = [
   {path: 'planner', component: PlannerViewComponent},
@@ -50,7 +52,9 @@ const appRoutes: Routes = [
     TeachersPanelModule,
     FullCalendarModule
   ],
-  providers: [],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: JWTInterceptor, multi: true},
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

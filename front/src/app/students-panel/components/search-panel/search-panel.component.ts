@@ -77,6 +77,12 @@ export class Teacher {
 
 export class Subject {
   id: string;
-  subject_name: string;
-  pivot: object;
+  name: string;
+  pivot: TeacherSubject;
+}
+
+export class TeacherSubject {
+  id: string;
+  teacher_id: string;
+  subject_id: string;
 }

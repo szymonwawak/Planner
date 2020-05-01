@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -15,15 +16,17 @@ class Consultation extends Model
         'end_date',
         'day'
     ];
-    protected $hidden=[
+    protected $hidden = [
         "pvt"
     ];
 
-    public function teacherSubject(){
-
+    public function teacherSubject()
+    {
         return $this->belongsTo("App\Models\TeacherSubject");
     }
-    public function studentConsultation(){
+
+    public function studentConsultation()
+    {
 
         return $this->hasMany("App\Models\StudentConsultation");
     }

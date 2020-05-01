@@ -11,7 +11,7 @@ use Firebase\JWT\JWT;
 class Utils
 {
 
-    public function getUserIdfromToken($request)
+    public function getUserIdFromToken($request)
     {
         $authHeader = $request->getHeader('authorization');
         $str = json_encode($authHeader);

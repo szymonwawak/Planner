@@ -21,8 +21,7 @@ class Teacher extends Model
 
     ];
 
-    public function teacherSubjects(){
-
-        return $this->hasMany("App\Models\TeacherSubject");
+    public function subjects(){
+        return $this->belongsToMany("App\Models\Subject", 'teacher_subject')->withPivot('id');
     }
 }

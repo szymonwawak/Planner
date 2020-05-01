@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 
 use App\Controllers\Controller;
+use DateTime;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Models\TeacherSubject;
@@ -23,7 +24,7 @@ class TeacherSubjectController extends Controller
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $lesson = TeacherSubject::where('id', $id)->get();
+        $lesson = TeacherSubject::where('id', $id)->with('subject')->get();
         if ($lesson->isEmpty())
             return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
         return $response->getBody()->write($lesson->toJson());
@@ -69,7 +70,7 @@ class TeacherSubjectController extends Controller
 
     public function getUserConsultations(Request $request, Response $response, $args)
     {
-        $userId = Utils::getUserIdfromToken($request);
+        $userId = Utils::getUserIdFromToken($request);
         $consultationArray = array();
         $teacherSubjects = TeacherSubject::where('teacher_id', $userId)->get();
 
@@ -83,26 +84,45 @@ class TeacherSubjectController extends Controller
 
     public function getStudentConsultations(Request $request, Response $response, $args)
     {
-        $userId = Utils::getUserIdfromToken($request);
+        $userId = Utils::getUserIdFromToken($request);
         $consultationArray = array();
         $studentConsultationArray = array();
         $data = $request->getParsedBody();
-        $teacherSubjects = TeacherSubject::where('teacher_id', $userId)->whereHas('consultation', function ($query) use ($data) {
-            $query->where('start_date', '>', $data['start_date'])->where('end_date', '<', $data['end_date']);
-        })->get();
-
+        $dateFrom = new DateTime($data['start_date']);
+        $dateTo = new DateTime($data['end_date']);
+        $teacherSubjects = TeacherSubject::where('teacher_id', $userId)->get();
         foreach ($teacherSubjects as $teacherSubject) {
             $consultationArray[] = $teacherSubject->consultation;
-            $consultationCollects = $teacherSubject->consultation;
-            foreach ($consultationCollects as $consultationCollect) {
-                $studentConsultationArray[] = $consultationCollect->studentConsultation;
+            $consultationScheme = $teacherSubject->consultation;
+            $subject = $teacherSubject->subject;
+            foreach ($consultationScheme as $scheme) {
+                $studentConsultation = $scheme->studentConsultation
+                    ->where('date', '>', $dateFrom->format('Y-m-d'))
+                    ->where('date', '<', $dateTo->format('Y-m-d'));
+                foreach ($studentConsultation as $consultation) {
+                    $consultation->setAttribute('subject', $subject);
+                    $studentConsultationArray[] = $consultation;
+                }
             }
         }
         $studentConsultations = json_encode($studentConsultationArray);
 
-        $consultations = json_encode($consultationArray);
+        return $response->withStatus(201)->getBody()->write($studentConsultations);
+    }
 
-        return $response->withStatus(201)->getBody()->write($consultations, $studentConsultations);
+    public function assignSubjectToCurrentlyLoggedTeacher(Request $request, Response $response, $args)
+    {
+        $data = $request->getParsedBody();
+        $teacherId = Utils::getUserIdFromToken($request);
+        if (TeacherSubject::where('teacher_id', '=', $teacherId)->where('subject_id', '=', $data['subject_id'])->count() > 0) {
+            return $response->withStatus(400)->getBody()->write("Takie zajęcia już istnieją");
+        }
+        $lesson = new TeacherSubject();
+        $lesson->teacher_id = $teacherId;
+        $lesson->subject_id = $data['subject_id'];
+        $lesson->save();
+
+        return $response->withStatus(201)->getBody()->write($lesson->toJson());
     }
 }
 
