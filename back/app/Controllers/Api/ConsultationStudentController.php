@@ -4,6 +4,7 @@ namespace App\Controllers\Api;
 
 
 use App\Controllers\Controller;
+use App\Models\Teacher;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use App\Models\StudentConsultation;
@@ -21,41 +22,45 @@ class ConsultationStudentController extends Controller
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $student = StudentConsultation::where('id', $id)->get();
-        if ($student->isEmpty())
+        $studentConsultation = StudentConsultation::where('id', $id)->get();
+        if ($studentConsultation->isEmpty())
             return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
-        return $response->getBody()->write($student->toJson());
+        return $response->getBody()->write($studentConsultation->toJson());
     }
 
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
-        $student = new StudentConsultation();
-        $x = StudentConsultation::where('consultation_id', $data['consultation_id'])->whereBetween('start_time', [$data['start_time'], $data['finish_time']])->whereBetween('finish_time', [$data['finish_time'], $data['start_time']])->count();
-        var_dump($x);
+        if ($data['start_time'] >= $data['finish_time'])
+            return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
+        if (StudentConsultation::where('consultation_id',$data['consultation_id'])->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->count() > 0) {
+            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+        }
+        if (StudentConsultation::where('consultation_id',$data['consultation_id'])->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->count() > 0) {
+            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+        }
 
+        $studentConsultation = new StudentConsultation();
+        $studentConsultation->data = $data['data'];
+        $studentConsultation->consultation_id = $data['consultation_id'];
+        $studentConsultation->student_name = $data['student_name'];
+        $studentConsultation->student_surname = $data['student_surname'];
+        $studentConsultation->student_email = $data['student_email'];
+        $studentConsultation->start_time = $data['start_time'];
+        $studentConsultation->finish_time = $data['finish_time'];
+        $studentConsultation->accepted =0;
 
-        die();
-        // ->count() > 0
-        $student->idconsult = $data['consultation_id'];
-        $student->student_name = $data['student_name'];
-        $student->student_surname = $data['student_surname'];
-        $student->student_email = $data['student_email'];
-        $student->start_time = $data['start_time'];
-        $student->finish_time = $data['finish_time'];
-        $student->accepted = 0;
+        $studentConsultation->save();
 
-        $student->save();
-
-        return $response->withStatus(201)->getBody()->write($student->toJson());
+        return $response->withStatus(201)->getBody()->write($studentConsultation->toJson());
     }
 
     public function delete(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $student = StudentConsultation::where('id', $id)->first();
-        if ($student != null) {
-            $student->delete();
+        $studentConsultation = StudentConsultation::find( $id);
+        if ($studentConsultation) {
+            $studentConsultation->delete();
             return $response->withStatus(200);
         }
         return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
@@ -65,18 +70,37 @@ class ConsultationStudentController extends Controller
     {
         $id = $args['id'];
         $data = $request->getParsedBody();
-        $student = StudentConsultation::find($id);
-        $student->student_name = $data['student_name'] ?: $student->student_name;
-        $student->student_surname = $data['student_surname'] ?: $student->student_surname;
-        $student->student_email = $data['student_email'] ?: $student->student_email;
-        $student->start_time = $data['start_time'] ?: $student->start_time;
-        $student->finish_time = $data['finish_time'] ?: $student->finish_time;
-        $student->accepted = $data['accepted'] ?: $student->accepted;
-        $student->consultation_id = $data['consultation_id'] ? : $student->consultation_id;
+        $studentConsultation = StudentConsultation::find($id);
 
-        $student->save();
 
-        return $response->withStatus(201);
+        if ($data['start_time'] >= $data['finish_time'])
+            return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
+
+        if (StudentConsultation::where('start_time', '!=', $studentConsultation->start_time)->where('finish_time', '!=', $studentConsultation->finish_time)->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->count() > 0) {
+
+            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+        }
+        if (StudentConsultation::where('start_time', '!=', $studentConsultation->start_time)->where('finish_time', '!=', $studentConsultation->finish_time)->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->count() > 0) {
+
+            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+        }
+
+
+        $studentConsultation->student_name = $data['student_name'] ?: $studentConsultation->student_name;
+        $studentConsultation->student_surname = $data['student_surname'] ?: $studentConsultation->student_surname;
+        $studentConsultation->student_email = $data['student_email'] ?: $studentConsultation->student_email ;
+        $studentConsultation->start_time = $data['start_time'] ?: $studentConsultation->start_time ;
+        $studentConsultation->finish_time = $data['finish_time'] ?: $studentConsultation->finish_time ;
+        $studentConsultation->accepted = $data['accepted'] ?: $studentConsultation->accepted = $data;
+        $studentConsultation->consultation_id = $data['consultation_id'] ?: $studentConsultation->consultation_id ;
+        $studentConsultation->data = $data['data'] ?: $studentConsultation->data;
+
+        $studentConsultation->save();
+
+        return $response->withStatus(201)->getBody()->write($studentConsultation->toJson());
     }
+
+
+
 }
 
