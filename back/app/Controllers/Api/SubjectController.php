@@ -20,8 +20,8 @@ class SubjectController extends Controller
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $subject = Subject::select('id', 'name')->where('id', $id)->get();
-        if ($subject->isEmpty())
+        $subject = Subject::find($id);
+        if (!$subject)
             return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
         return $response->withStatus(201)->getBody()->write($subject->toJson());
     }

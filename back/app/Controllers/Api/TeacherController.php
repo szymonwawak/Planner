@@ -46,10 +46,10 @@ class TeacherController extends Controller
         return $response->withStatus(201)->getBody()->write($teacher->toJson());
     }
 
-    public function delete(Request $request, Response $response, $args)
+    public function removeAccount(Request $request, Response $response, $args)
     {
-        $id = $args['id'];
-        $teacher = Teacher::where('id', $id)->first();
+        $userId=$this->getUserIdfromToken($request);
+        $teacher = Teacher::where('id', $userId)->first();
         if ($teacher != null) {
             $teacher->delete();
             return $response->withStatus(200);

@@ -12,7 +12,7 @@ $app->group('/api', function () use ($app) {
         $app->get('', "TeacherController:getAll");
         $app->get('/{id}', "TeacherController:getSingle");
         $app->post('', "TeacherController:create");
-        $app->delete('', "TeacherController:delete");
+        $app->delete('', "TeacherController:removeAccount");
         $app->put('', "TeacherController:update");
     });
 

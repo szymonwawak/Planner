@@ -3,6 +3,7 @@
 namespace App\Controllers\Api;
 
 use App\Controllers\Controller;
+use App\Models\Consultation;
 use App\Models\StudentConsultation;
 use App\Models\Teacher;
 use Slim\Http\Request;
@@ -25,18 +26,22 @@ class Utils
         return $decoded->userId;
     }
 
-    public function sendEmail(Request $request, Response $response)
+    public function sendEmail(Request $request)
     {
         $data = $request->getParsedBody();
-        //$to=$data["student_email"];
-        $to = 'no.replay.konsultacje@gmail.com';
-        $userName = Teacher::select('name', 'surname')->where('id', $this->getUserIdfromToken($request))->first();
-        $studentConsultation = StudentConsultation::select("start_time", "finish_time")->where('id', $data['id'])->first();
+        $consultation = Consultation::find($data['consultation_id']);
+        $teacher_subject = $consultation->teacher_subject_id;
+        $email = Teacher::select("email")->whereHas('teacherSubjects', function ($query) use ($teacher_subject) {
+            $query->where("id", $teacher_subject);
+        })->first();
 
-        $message = "Witaj. Termin konsultacji u " . $userName->name . " " . $userName->surname . " został przełożone na dzień " . $studentConsultation->date . " od godziny " . $studentConsultation->start_time . " do " . $studentConsultation->finish_time;
+        $to = $email->email;
+        $studentConsultation = StudentConsultation::select("start_time", "finish_time", "data")->where('id', $data['id'])->first();
+
+        $message = "Witaj. Masz nową prośbę o zaakceptowanie terminu konsultacji dnia " . $studentConsultation->data . " od godziny " . $studentConsultation->start_time . " do " . $studentConsultation->finish_time;
 
         mail($to, "Zmiana terminu konsultacji", $message, 'From: no.replay.konsultacje@gmail.com');
-        return $response->withStatus(200)->getBody()->write("Email został wysłany");
+
     }
 
 }
