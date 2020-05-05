@@ -5,7 +5,7 @@
   <mat-divider></mat-divider>
   <mat-card-content>
     <mat-selection-list [multiple]="false" [(ngModel)]="studentsConsultation">
-      <mat-list-option [value]="studentsConsultation" *ngFor="let studentsConsultation of studentsConsultations">
+      <mat-list-option *ngFor="let studentsConsultation of studentsConsultations">
         Przedmiot: {{studentsConsultation.subject.name}}
         Imię i nazwisko studenta: {{studentsConsultation.student_name}} {{studentsConsultation.student_surname}}
         <br> Data: {{studentsConsultation.date}} Email: {{studentsConsultation.student_email}}

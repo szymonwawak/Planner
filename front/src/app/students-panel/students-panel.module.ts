@@ -20,20 +20,23 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [PlannerViewComponent, SearchPanelComponent, TeacherSearchPipe],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    RouterModule.forRoot(appRoutes),
-    MatToolbarModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    FormsModule,
-    FullCalendarModule,
-    OverlayModule
-  ]
+    declarations: [PlannerViewComponent, SearchPanelComponent, TeacherSearchPipe],
+    exports: [
+        SearchPanelComponent
+    ],
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        RouterModule.forRoot(appRoutes),
+        MatToolbarModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        FormsModule,
+        FullCalendarModule,
+        OverlayModule
+    ]
 })
 export class StudentsPanelModule {
 }

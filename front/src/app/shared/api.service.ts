@@ -23,10 +23,16 @@ export class ApiService {
   constructor(private http: HttpClient) {
   }
 
+  getCurrentUserData(): Observable<Teacher> {
+    return this.http.get<Teacher>(this.TEACHERS_URL + '/currentUser');
+  }
   getAllTeachers(): Observable<Teacher[]> {
     return this.http.get<Teacher[]>(this.TEACHERS_URL);
   }
 
+  updateTeacher(teacher: Teacher): Observable<any> {
+    return this.http.put<any>(this.TEACHERS_URL + '/' + teacher.id, teacher);
+  }
   getAllSubjects(): Observable<Subject[]> {
     return this.http.get<Subject[]>(this.SUBJECTS_URL);
   }
@@ -52,19 +58,19 @@ export class ApiService {
   }
 
   deleteAccount(): Observable<any> {
-    return this.http.delete<any>(this.TEACHERS_URL + '/account')
+    return this.http.delete<any>(this.TEACHERS_URL + '/removeAccount')
   }
 
   changePassword(passwordChangeModel: PasswordChangeModel): Observable<any> {
-    return this.http.post<any>(this.TEACHERS_URL + '/password', passwordChangeModel)
+    return this.http.post<any>(this.TEACHERS_URL + '/changePassword', passwordChangeModel)
   }
 
   getCurrentUserConsultationSchemes(): Observable<any> {
-    return this.http.get<any>(this.CONSULTATIONS_URL)
+    return this.http.get<any>(this.TEACHERS_URL + '/consultations')
   }
 
   getCurrentUserStudentsConsultations(model: Dates): Observable<any> {
-    return this.http.post<any>(this.TEACHER_SUBJECTS_URL + '/' + 'studentConsultations', model)
+    return this.http.post<any>(this.TEACHERS_URL + '/' + 'studentConsultations', model)
   }
 
   updateStudentsConsultations(studentsConsultation: StudentsConsultation): Observable<any> {

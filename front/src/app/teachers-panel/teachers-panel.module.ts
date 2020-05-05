@@ -17,7 +17,7 @@ import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {EmployeesComponent} from './components/employees/employees.component';
 import {MatInputModule} from "@angular/material/input";
 import {MatNativeDateModule, MatOptionModule} from "@angular/material/core";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatDialogModule} from "@angular/material/dialog";
 import {AssignSubjectsDialogComponent} from './components/assign-subjects-dialog/assign-subjects-dialog.component';
 import {MatSelectModule} from "@angular/material/select";
@@ -29,6 +29,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import { EditStudentsConsultationComponent } from './components/edit-students-consultation/edit-students-consultation.component';
 import {TimepickerModule} from "ngx-bootstrap/timepicker";
 import {MatDatepickerModule} from "@angular/material/datepicker";
+import { ChangeTeacherDataComponent } from './components/change-teacher-data/change-teacher-data.component';
+import {StudentsPanelModule} from "../students-panel/students-panel.module";
 
 const appRoutes: Routes = [
   {
@@ -37,7 +39,7 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [PanelViewComponent, IncomingConsultationsComponent, SubjectsCardComponent, ConsultationsScheduleComponent, DashboardComponent, EmployeesComponent, AssignSubjectsDialogComponent, CreateSubjectDialogComponent, SettingsComponent, PasswordChangeComponent, DeleteAccountComponent, EditStudentsConsultationComponent],
+  declarations: [PanelViewComponent, IncomingConsultationsComponent, SubjectsCardComponent, ConsultationsScheduleComponent, DashboardComponent, EmployeesComponent, AssignSubjectsDialogComponent, CreateSubjectDialogComponent, SettingsComponent, PasswordChangeComponent, DeleteAccountComponent, EditStudentsConsultationComponent, ChangeTeacherDataComponent],
   imports: [
     CommonModule,
     MatToolbarModule,
@@ -56,7 +58,9 @@ const appRoutes: Routes = [
     MatCheckboxModule,
     TimepickerModule.forRoot(),
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    ReactiveFormsModule,
+    StudentsPanelModule
   ]
 })
 

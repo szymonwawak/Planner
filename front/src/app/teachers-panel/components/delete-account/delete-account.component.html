@@ -1,0 +1,19 @@
+<mat-card class="example-card">
+  <mat-card-header class="pink-card">
+    <mat-card-title>Usuń konto:</mat-card-title>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+    <p>Czy na pewno chcesz usunąć konto? Będzie to proces nieodwracalny</p>
+    <mat-checkbox
+      [(ngModel)]="confirmed">
+      Tak, jestem pewien
+    </mat-checkbox>
+    <div align="end">
+      <button mat-raised-button color="warn" class="m-3" [disabled]="!confirmed" (click)="deleteAccount()">
+        <mat-icon fontSet="material-icons-outlined">delete</mat-icon>
+        Usuń
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

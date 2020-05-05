@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Teacher} from "../../../students-panel/components/search-panel/search-panel.component";
 import {ApiService} from "../../../shared/api.service";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-employees',
@@ -10,21 +11,21 @@ import {ApiService} from "../../../shared/api.service";
 export class EmployeesComponent implements OnInit {
 
   teachers: Teacher[];
-  teacher: Teacher = {
-    id: '',
-    name: '',
-    surname: '',
-    email: '',
-    subjects: []
-  };
-
+  teacher: Teacher;
   disabled: boolean = true;
+  createUserForm: FormGroup;
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private formBuilder: FormBuilder) {
   }
 
   ngOnInit(): void {
+    this.teacher = new Teacher();
     this.getTeachers();
+    this.createUserForm = this.formBuilder.group({
+      'name': [{value: this.teacher.name, disabled: true}, Validators.required],
+      'surname': [{value: this.teacher.surname, disabled: true}, Validators.required],
+      'email': [{value: this.teacher.email, disabled: true}, Validators.required],
+    });
   }
 
   getTeachers(): void {
@@ -33,45 +34,62 @@ export class EmployeesComponent implements OnInit {
         this.teachers = res;
       },
       err => {
-        alert("Wystąpił błąd");
-      }
-    )
-  }
-
-  createTeacher() {
-    this.apiService.createTeacher(this.teacher).subscribe(
-      res => {
-        alert("Użytkownik został dodany!")
-      },
-      err => {
-        alert("Wystąpił błąd");
+        alert(err.error.message);
       }
     )
   }
 
   setTeacher(teacher: Teacher) {
     this.teacher = teacher;
+    this.createUserForm.setValue({
+      'name': this.teacher.name,
+      'surname': this.teacher.surname,
+      'email': this.teacher.email
+    });
   }
 
   prepareNewTeacher() {
-    this.disabled = false;
-    this.teacher = {
-      id: '',
-      name: '',
-      surname: '',
-      email: '',
-      subjects: null
-    };
+    this.enableInputs();
+    this.clearUser();
+  }
+
+  clearUser() {
+    this.createUserForm.setValue({
+      'name': '',
+      'surname': '',
+      'email': ''
+    });
+    this.teacher = null;
+  }
+
+  createTeacher() {
+    if (this.createUserForm.invalid)
+      return;
+    this.teacher = this.createUserForm.value;
+    this.apiService.createTeacher(this.teacher).subscribe(
+      res => {
+        alert(res.message)
+        this.ngOnInit()
+      },
+      err => {
+        alert(err.error.message);
+      }
+    )
   }
 
   dismissCreating() {
-    this.disabled = true;
-    this.teacher = {
-      id: '',
-      name: '',
-      surname: '',
-      email: '',
-      subjects: []
-    };
+    this.ngOnInit()
+  }
+
+  enableInputs() {
+    for (let controlsKey in this.createUserForm.controls) {
+      this.createUserForm.controls[controlsKey].enable();
+    }
+  }
+
+  disableInputs() {
+    for (let controlsKey in this.createUserForm.controls) {
+      this.createUserForm.controls[controlsKey].disable();
+    }
   }
 }

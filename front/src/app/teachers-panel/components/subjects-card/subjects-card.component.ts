@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AssignSubjectsDialogComponent} from "../assign-subjects-dialog/assign-subjects-dialog.component";
-import {Subject} from "../../../students-panel/components/search-panel/search-panel.component";
+import {Subject, Teacher} from "../../../students-panel/components/search-panel/search-panel.component";
 import {ApiService} from "../../../shared/api.service";
 import {CreateSubjectDialogComponent} from "../create-subject-dialog/create-subject-dialog.component";
 
@@ -12,14 +12,37 @@ import {CreateSubjectDialogComponent} from "../create-subject-dialog/create-subj
 })
 export class SubjectsCardComponent implements OnInit {
 
-  public subjects: Subject[];
+  public userSubjects: Subject[];
   public selectedSubject: Subject;
 
   constructor(private dialog: MatDialog, private apiService: ApiService) {
   }
 
   ngOnInit(): void {
-    this.initElement()
+    this.apiService.getCurrentUserSubjects().subscribe(
+      res => {
+        this.userSubjects = res;
+      },
+      err => {
+        alert("Wystąpił błąd");
+      }
+    )
+  }
+
+  setSubject(subject: Subject) {
+    this.selectedSubject = subject;
+  }
+
+  deleteSubject(): void {
+    this.apiService.deleteTeacherSubject(this.selectedSubject.pivot.id).subscribe(
+      res => {
+        this.ngOnInit();
+      },
+      err => {
+        alert("Wystąpił błąd");
+      }
+    );
+    this.ngOnInit();
   }
 
   openSubjectsDialog(): void {
@@ -27,8 +50,9 @@ export class SubjectsCardComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '450px';
+    dialogConfig.data = this.userSubjects
     this.dialog.open(AssignSubjectsDialogComponent, dialogConfig).afterClosed().subscribe(
-      () => this.initElement()
+      () => this.ngOnInit()
     )
   }
 
@@ -38,30 +62,5 @@ export class SubjectsCardComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = '450px';
     this.dialog.open(CreateSubjectDialogComponent, dialogConfig);
-  }
-
-  initElement(): void {
-    this.apiService.getCurrentUserSubjects().subscribe(
-      res => {
-        this.subjects = res;
-      },
-      err => {
-        alert("Wystąpił błąd");
-      }
-    )
-  }
-
-  removeSubject(): void {
-    this.apiService.deleteTeacherSubject(this.selectedSubject[0].pivot.id).subscribe(
-      res => {
-        this.subjects = this.subjects.filter(obj => obj != this.selectedSubject);
-        this.selectedSubject = null;
-        this.initElement();
-      },
-      err => {
-        alert("Wystąpił błąd");
-      }
-    );
-    this.initElement();
   }
 }

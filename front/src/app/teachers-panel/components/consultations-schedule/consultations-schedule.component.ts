@@ -16,7 +16,7 @@ export class ConsultationsScheduleComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.setConsultationSchemes();
+    // this.setConsultationSchemes();
   }
 
   setConsultationSchemes(): void {
