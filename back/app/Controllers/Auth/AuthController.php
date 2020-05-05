@@ -27,12 +27,12 @@ class AuthController extends Controller
         );
 
         if (!$teacher) {
-            return $response->withJson(['error' => true, 'message' => 'Email jest niepoprawny']);
+            return $response->withStatus(403)->withJson(['error' => true, 'message' => 'Email jest niepoprawny']);
         }
 
 
         if (!password_verify($password, $teacher->password)) {
-            return $response->withJson(['error' => true, 'message' => 'Hasło jest niepoprawne']);
+            return $response->withStatus(403)->withJson(['error' => true, 'message' => 'Hasło jest niepoprawne']);
         }
 
 

@@ -22,7 +22,7 @@ class Consultation extends Model
 
     public function teacherSubject()
     {
-        return $this->belongsTo("App\Models\TeacherSubject");
+        return $this->belongsTo("App\Models\Teacher");
     }
 
     public function studentConsultation()

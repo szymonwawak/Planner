@@ -68,48 +68,6 @@ class TeacherSubjectController extends Controller
         return $response->withStatus(201)->getBody()->write($lesson->toJson());
     }
 
-    public function getUserConsultations(Request $request, Response $response, $args)
-    {
-        $userId = Utils::getUserIdFromToken($request);
-        $consultationArray = array();
-        $teacherSubjects = TeacherSubject::where('teacher_id', $userId)->get();
-
-        foreach ($teacherSubjects as $teacherSubject) {
-            $consultationArray[] = $teacherSubject->consultations;
-        }
-        $userConsultations = json_encode($consultationArray);
-        return $response->withStatus(201)->getBody()->write($userConsultations);
-    }
-
-
-    public function getStudentConsultations(Request $request, Response $response, $args)
-    {
-        $userId = Utils::getUserIdFromToken($request);
-        $consultationArray = array();
-        $studentConsultationArray = array();
-        $data = $request->getParsedBody();
-        $dateFrom = new DateTime($data['start_date']);
-        $dateTo = new DateTime($data['end_date']);
-        $teacherSubjects = TeacherSubject::where('teacher_id', $userId)->get();
-        foreach ($teacherSubjects as $teacherSubject) {
-            $consultationArray[] = $teacherSubject->consultation;
-            $consultationScheme = $teacherSubject->consultation;
-            $subject = $teacherSubject->subject;
-            foreach ($consultationScheme as $scheme) {
-                $studentConsultation = $scheme->studentConsultation
-                    ->where('date', '>', $dateFrom->format('Y-m-d'))
-                    ->where('date', '<', $dateTo->format('Y-m-d'));
-                foreach ($studentConsultation as $consultation) {
-                    $consultation->setAttribute('subject', $subject);
-                    $studentConsultationArray[] = $consultation;
-                }
-            }
-        }
-        $studentConsultations = json_encode($studentConsultationArray);
-
-        return $response->withStatus(201)->getBody()->write($studentConsultations);
-    }
-
     public function assignSubjectToCurrentlyLoggedTeacher(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();

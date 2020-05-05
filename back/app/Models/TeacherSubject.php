@@ -15,11 +15,6 @@ class TeacherSubject extends Model
         "pvt"
     ];
 
-    public function consultation()
-    {
-        return $this->hasMany("App\Models\Consultation");
-    }
-
     public function teacher()
     {
         return $this->belongsTo("App\Models\Teacher");

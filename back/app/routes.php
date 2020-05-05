@@ -6,14 +6,16 @@ $app->post('/auth/login', 'AuthController:login');
 
 $app->group('/api', function () use ($app) {
     $app->group('/teachers', function () use ($app) {
-        $app->group('/changePassword', function () use ($app) {
-            $app->put('', "TeacherController:password");
-        });
+        $app->get('/currentUser', 'TeacherController:getCurrentUser');
         $app->get('', "TeacherController:getAll");
         $app->get('/{id}', "TeacherController:getSingle");
         $app->post('', "TeacherController:create");
-        $app->delete('', "TeacherController:removeAccount");
-        $app->put('', "TeacherController:update");
+        $app->put('/{id}', "TeacherController:update");
+        $app->post('/studentConsultations', 'TeacherController:getStudentConsultations');
+        $app->get('consultations', 'TeacherController:getUserConsultations');
+
+        $app->post('changePassword', "TeacherController:changePassword");
+        $app->delete('removeAccount', "TeacherController:removeAccount");
     });
 
     $app->group('/subjects', function () use ($app) {
@@ -28,10 +30,6 @@ $app->group('/api', function () use ($app) {
     });
 
     $app->group('/teacherSubjects', function () use ($app) {
-        $app->group('/studentConsultations', function () use ($app) {
-            $app->post('', 'TeacherSubjectController:getStudentConsultations');
-        });
-        $app->get('', 'TeacherSubjectController:getUserConsultations');
         $app->get('/{id}', "TeacherSubjectController:getSingle");
         $app->post('', "TeacherSubjectController:create");
         $app->post('/addToCurrent', "TeacherSubjectController:assignSubjectToCurrentlyLoggedTeacher");
@@ -61,7 +59,5 @@ $app->group('/api', function () use ($app) {
         $app->put('/{id}', "ConsultationStudentController:update");
 
     });
-
-
 });
 
