@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -16,14 +17,15 @@ class StudentConsultation extends Model
         'finish_time',
         'accepted'
     ];
-    protected $hidden=[
-        "pvt"
-    ];
 
 
-    public function consultation(){
-
-        return $this->belongsTo("App\Models\Consultation");
+    public function teacher()
+    {
+        return $this->belongsTo("App\Models\Teacher");
     }
 
+    public function subject()
+    {
+        return $this->belongsTo("App\Models\Subject");
+    }
 }

@@ -68,11 +68,11 @@ class TeacherController extends Controller
         return $response->withStatus(201)->withJson(['success' => true, 'message' => 'Pomyślnie zapisano dane!']);
     }
 
-    public function getUserConsultations(Request $request, Response $response)
+    public function getUserConsultations(Request $request, Response $response, $args)
     {
         $userId = Utils::getUserIdFromToken($request);
         $consultations = Consultation::where('teacher_id', $userId)->get();
-        return $response->withStatus(201)->withJson($consultations);
+        return $response->withStatus(200)->withJson($consultations);
     }
 
     public function getStudentConsultations(Request $request, Response $response)
@@ -84,14 +84,14 @@ class TeacherController extends Controller
         $consultationSchedules = Consultation::where('teacher_id', $userId)->get();
         $consultations = array();
         foreach ($consultationSchedules as $schedule) {
-            $studentConsultations = $schedule->studentConsultation
+            $studentConsultations = $schedule->studentConsultations
                 ->where('date', '>=', $dateFrom->format('Y-m-d'))
                 ->where('date', '<=', $dateTo->format('Y-m-d'));
             foreach ($studentConsultations as $studentConsultation) {
                 $consultations[] = $studentConsultation;
             }
         }
-        return $response->withStatus(201)->withJson($studentConsultations);
+        return $response->withStatus(201)->withJson($consultations);
     }
 
     public function getCurrentUser(Request $request, Response $response)
@@ -99,7 +99,7 @@ class TeacherController extends Controller
         $userId = Utils::getUserIdFromToken($request);
         $user = Teacher::find($userId);
         if (!$user)
-            return $response->withStatus(404)->getBody()->write("Nie znaleziono użytkownika");
+            return $response->withStatus(404)->withJson(['error' => true, 'message' => 'Nie znaleziono użytkownika']);
         return $response->withStatus(200)->withJson($user);
     }
 
@@ -116,7 +116,6 @@ class TeacherController extends Controller
             return $response->withStatus(401)->withJson(['error' => true, 'message' => 'Poprzednie hasło jest niepoprawne']);
         }
         $newPassword = password_hash($data['newPassword'], PASSWORD_DEFAULT, ['cost' => 10]);
-
         $teacher->password = $newPassword;
         $teacher->first_login = '0';
         $teacher->save();

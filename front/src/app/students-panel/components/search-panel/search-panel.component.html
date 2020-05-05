@@ -20,7 +20,7 @@
         <mat-label>Wybierz przedmiot:</mat-label>
         <mat-select [(ngModel)]="lessonModel.subject" [value]="lessonModel.subject">
           <mat-option [value]="null">----------------</mat-option>
-          <mat-option *ngFor="let subject of filterSubjects()" [value]="subject">{{subject.subject_name}}</mat-option>
+          <mat-option *ngFor="let subject of filterSubjects()" [value]="subject">{{subject.name}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>

@@ -20,16 +20,20 @@
     <div class="col-8">
       <div disabled="true" aria-hidden="true">
       <full-calendar
+        #calendarComponent
         aria-disabled="true"
         aria-hidden="true"
         [allDaySlot]=false
         [plugins]="calendarPlugins"
         [editable]="true"
-        [height]="'auto'"
-        slotLabelInterval="01:00:00"
+        [height]="600"
+        [validRange]="validDate"
+        [selectable]="true"
+        (select)="openNewEventDialog($event)"
+        slotLabelInterval="00:30:00"
         slotDuration="00:10:00"
         defaultView="timeGridWeek"
-        events="https://fullcalendar.io/demo-events.json"
+        [events]="events"
         locale="pl"
         maxTime="20:00:00"
         minTime="08:00:00"

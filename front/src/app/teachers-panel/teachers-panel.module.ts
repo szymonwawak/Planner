@@ -31,6 +31,9 @@ import {TimepickerModule} from "ngx-bootstrap/timepicker";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import { ChangeTeacherDataComponent } from './components/change-teacher-data/change-teacher-data.component';
 import {StudentsPanelModule} from "../students-panel/students-panel.module";
+import { AddConsultationSchemeDialogComponent } from './components/add-consultation-scheme-dialog/add-consultation-scheme-dialog.component';
+import { EditConsultationSchemeDialogComponent } from './components/edit-consultation-scheme-dialog/edit-consultation-scheme-dialog.component';
+import {MatPaginatorModule} from "@angular/material/paginator";
 
 const appRoutes: Routes = [
   {
@@ -39,29 +42,30 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  declarations: [PanelViewComponent, IncomingConsultationsComponent, SubjectsCardComponent, ConsultationsScheduleComponent, DashboardComponent, EmployeesComponent, AssignSubjectsDialogComponent, CreateSubjectDialogComponent, SettingsComponent, PasswordChangeComponent, DeleteAccountComponent, EditStudentsConsultationComponent, ChangeTeacherDataComponent],
-  imports: [
-    CommonModule,
-    MatToolbarModule,
-    MatButtonModule,
-    RouterModule.forRoot(appRoutes),
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    FontAwesomeModule,
-    MatCardModule,
-    MatInputModule,
-    MatOptionModule,
-    FormsModule,
-    MatDialogModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    TimepickerModule.forRoot(),
-    MatDatepickerModule,
-    MatNativeDateModule,
-    ReactiveFormsModule,
-    StudentsPanelModule
-  ]
+  declarations: [PanelViewComponent, IncomingConsultationsComponent, SubjectsCardComponent, ConsultationsScheduleComponent, DashboardComponent, EmployeesComponent, AssignSubjectsDialogComponent, CreateSubjectDialogComponent, SettingsComponent, PasswordChangeComponent, DeleteAccountComponent, EditStudentsConsultationComponent, ChangeTeacherDataComponent, AddConsultationSchemeDialogComponent, EditConsultationSchemeDialogComponent],
+    imports: [
+        CommonModule,
+        MatToolbarModule,
+        MatButtonModule,
+        RouterModule.forRoot(appRoutes),
+        MatSidenavModule,
+        MatListModule,
+        MatIconModule,
+        FontAwesomeModule,
+        MatCardModule,
+        MatInputModule,
+        MatOptionModule,
+        FormsModule,
+        MatDialogModule,
+        MatSelectModule,
+        MatCheckboxModule,
+        TimepickerModule.forRoot(),
+        MatDatepickerModule,
+        MatNativeDateModule,
+        ReactiveFormsModule,
+        StudentsPanelModule,
+        MatPaginatorModule
+    ]
 })
 
 export class TeachersPanelModule {

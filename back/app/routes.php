@@ -6,22 +6,19 @@ $app->post('/auth/login', 'AuthController:login');
 
 $app->group('/api', function () use ($app) {
     $app->group('/teachers', function () use ($app) {
+        $app->get('/consultationsSchedule', "TeacherController:getUserConsultations");
         $app->get('/currentUser', 'TeacherController:getCurrentUser');
-        $app->get('', "TeacherController:getAll");
         $app->get('/{id}', "TeacherController:getSingle");
+        $app->get('', "TeacherController:getAll");
         $app->post('', "TeacherController:create");
-        $app->put('/{id}', "TeacherController:update");
         $app->post('/studentConsultations', 'TeacherController:getStudentConsultations');
-        $app->get('consultations', 'TeacherController:getUserConsultations');
-
         $app->post('changePassword', "TeacherController:changePassword");
         $app->delete('removeAccount', "TeacherController:removeAccount");
+        $app->put('/{id}', "TeacherController:update");
     });
 
     $app->group('/subjects', function () use ($app) {
-        $app->group('/userSubjects', function () use ($app) {
-            $app->get('', 'SubjectController:getUserSubjects');
-        });
+        $app->get('/userSubjects', 'SubjectController:getUserSubjects');
         $app->get('', 'SubjectController:getAll');
         $app->get('/{id}', "SubjectController:getSingle");
         $app->post('', "SubjectController:create");
@@ -40,7 +37,7 @@ $app->group('/api', function () use ($app) {
 
     $app->group('/consultations', function () use ($app) {
         $app->group('/studentConsultations', function () use ($app) {
-            $app->get('', 'ConsultationController:getStudentConsultations');
+            $app->post('', 'ConsultationController:getStudentConsultations');
         });
 
         $app->get('', 'ConsultationController:getConsultations');

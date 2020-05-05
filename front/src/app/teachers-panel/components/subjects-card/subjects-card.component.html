@@ -5,8 +5,9 @@
   <mat-divider></mat-divider>
   <mat-card-content>
     <mat-selection-list [multiple]="false">
-      <mat-list-option *ngFor="let subject of userSubjects" (click)="setSubject(subject)">{{subject.name}}</mat-list-option>
+      <mat-list-option *ngFor="let subject of paginatedSubjects" (click)="setSubject(subject)">{{subject.name}}</mat-list-option>
     </mat-selection-list>
+    <mat-paginator [showFirstLastButtons]="true" [hidden]="pageSize >= userSubjects.length"[pageSizeOptions]="[]" [hidePageSize]="true" [pageSize]="pageSize" (page)="changePage($event)" [length]="length"></mat-paginator>
     <div align="end">
       <button mat-raised-button color="warn" class="m-3" [disabled]="!selectedSubject" (click)="deleteSubject()">
         <mat-icon fontSet="material-icons-outlined ">delete</mat-icon>

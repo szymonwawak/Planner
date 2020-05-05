@@ -7,6 +7,7 @@ import {
   Dates,
   StudentsConsultation
 } from "../teachers-panel/components/incoming-consultations/incoming-consultations.component";
+import {ConsultationScheme} from "../teachers-panel/components/consultations-schedule/consultations-schedule.component";
 
 @Injectable({
   providedIn: 'root'
@@ -65,10 +66,28 @@ export class ApiService {
     return this.http.post<any>(this.TEACHERS_URL + '/changePassword', passwordChangeModel)
   }
 
-  getCurrentUserConsultationSchemes(): Observable<any> {
-    return this.http.get<any>(this.TEACHERS_URL + '/consultations')
+  getCurrentUserConsultationSchemes(): Observable<ConsultationScheme[]> {
+    return this.http.get<ConsultationScheme[]>(this.TEACHERS_URL + '/consultationsSchedule')
   }
 
+  getConsultationSchemes(data): Observable<StudentsConsultation[]> {
+    return this.http.post<StudentsConsultation[]>(this.TEACHERS_URL + '/studentConsultations', data)
+  }
+  createConsultationScheme(scheme: ConsultationScheme): Observable<any> {
+    return this.http.post(this.CONSULTATIONS_URL, scheme)
+  }
+
+  updateConsultationScheme(scheme: ConsultationScheme): Observable<any> {
+    return this.http.put(this.CONSULTATIONS_URL + '/' + scheme.id, scheme)
+  }
+
+  deleteConsultationScheme(id: number): Observable<any> {
+    return this.http.delete(this.CONSULTATIONS_URL + '/' + id)
+  }
+
+  createStudentConsultation(studentsConsultation: StudentsConsultation): Observable<any> {
+    return this.http.post<any>(this.STUDENTS_CONSULTATIONS_URL, studentsConsultation);
+  }
   getCurrentUserStudentsConsultations(model: Dates): Observable<any> {
     return this.http.post<any>(this.TEACHERS_URL + '/' + 'studentConsultations', model)
   }

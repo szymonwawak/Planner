@@ -5,16 +5,27 @@
   <mat-divider></mat-divider>
   <mat-card-content>
     <mat-selection-list [multiple]="false">
-      <mat-list-option *ngFor="let consultationScheme of consultationSchemes">Przedmiot: {{consultationScheme.subject.name}} Dzień: {{days[consultationScheme.day]}} <br> Od: {{consultationScheme.start_date}} Do: {{consultationScheme.end_date}} W godzinach: {{consultationScheme.start_time}} - {{consultationScheme.finish_time}}</mat-list-option>
+      <mat-list-option class="h-auto mb-2" *ngFor="let consultationScheme of paginatedSchemes" (click)="setConsultationScheme(consultationScheme)">
+        <span><b>Dzień:</b> {{days[consultationScheme.day]}}</span>
+        <span><b>Od:</b> {{consultationScheme.start_date}} <b>Do:</b> {{consultationScheme.end_date}}</span>
+        <span><b>W godzinach: </b>{{consultationScheme.start_time}} - {{consultationScheme.finish_time}}</span>
+      </mat-list-option>
     </mat-selection-list>
+    <mat-paginator [showFirstLastButtons]="true" [hidden]="pageSize >= consultationSchemes.length"
+                   [pageSizeOptions]="[]" [hidePageSize]="true" [pageSize]="pageSize" (page)="changePage($event)"
+                   [length]="length"></mat-paginator>
     <div align="end">
-      <button mat-raised-button color="primary" class="m-3">
+      <button mat-raised-button color="primary" class="m-3" (click)="openAddConsultationSchemeDialog()">
         <mat-icon fontSet="material-icons-outlined ">add</mat-icon>
         Nowy termin
       </button>
-      <button mat-raised-button color="accent" disabled>
+      <button mat-raised-button color="accent" class="mr-3" [disabled]="!consultationScheme" (click)="openEditConsultationSchemeDialog()">
         <mat-icon fontSet="material-icons-outlined ">create</mat-icon>
         Edytuj
+      </button>
+      <button mat-raised-button color="warn" [disabled]="!consultationScheme" (click)="deleteScheme()">
+        <mat-icon fontSet="material-icons-outlined ">delete</mat-icon>
+        Usuń
       </button>
     </div>
   </mat-card-content>

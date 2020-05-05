@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AssignSubjectsDialogComponent} from "../assign-subjects-dialog/assign-subjects-dialog.component";
-import {Subject, Teacher} from "../../../students-panel/components/search-panel/search-panel.component";
+import {Subject} from "../../../students-panel/components/search-panel/search-panel.component";
 import {ApiService} from "../../../shared/api.service";
 import {CreateSubjectDialogComponent} from "../create-subject-dialog/create-subject-dialog.component";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-subjects-card',
@@ -14,6 +15,9 @@ export class SubjectsCardComponent implements OnInit {
 
   public userSubjects: Subject[];
   public selectedSubject: Subject;
+  paginatedSubjects: Subject[];
+  pageSize: number = 3;
+  length: number;
 
   constructor(private dialog: MatDialog, private apiService: ApiService) {
   }
@@ -22,6 +26,8 @@ export class SubjectsCardComponent implements OnInit {
     this.apiService.getCurrentUserSubjects().subscribe(
       res => {
         this.userSubjects = res;
+        this.paginatedSubjects = this.userSubjects.slice(0, this.pageSize)
+        this.length = this.userSubjects.length;
       },
       err => {
         alert("Wystąpił błąd");
@@ -42,7 +48,6 @@ export class SubjectsCardComponent implements OnInit {
         alert("Wystąpił błąd");
       }
     );
-    this.ngOnInit();
   }
 
   openSubjectsDialog(): void {
@@ -62,5 +67,10 @@ export class SubjectsCardComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = '450px';
     this.dialog.open(CreateSubjectDialogComponent, dialogConfig);
+  }
+
+  changePage(event: PageEvent): void {
+    let offset = event.pageSize * event.pageIndex;
+    this.paginatedSubjects = this.userSubjects.slice(offset, offset + this.pageSize);
   }
 }

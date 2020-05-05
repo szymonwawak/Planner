@@ -14,29 +14,38 @@ import {FormsModule} from "@angular/forms";
 import {TeacherSearchPipe} from './components/search-panel/teacher-search.pipe';
 import {FullCalendarModule} from "@fullcalendar/angular";
 import {OverlayModule} from '@angular/cdk/overlay';
+import { CreateStudentConsultationDialogComponent } from './components/create-student-consultation-dialog/create-student-consultation-dialog.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {TimepickerModule} from "ngx-bootstrap/timepicker";
+import {MatIconModule} from "@angular/material/icon";
 
 const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
 ];
 
 @NgModule({
-    declarations: [PlannerViewComponent, SearchPanelComponent, TeacherSearchPipe],
+    declarations: [PlannerViewComponent, SearchPanelComponent, TeacherSearchPipe, CreateStudentConsultationDialogComponent],
     exports: [
         SearchPanelComponent
     ],
-    imports: [
-        CommonModule,
-        MatButtonModule,
-        RouterModule.forRoot(appRoutes),
-        MatToolbarModule,
-        MatCardModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        FormsModule,
-        FullCalendarModule,
-        OverlayModule
-    ]
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    RouterModule.forRoot(appRoutes),
+    MatToolbarModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    FormsModule,
+    FullCalendarModule,
+    OverlayModule,
+    MatDialogModule,
+    MatDatepickerModule,
+    TimepickerModule,
+    MatIconModule
+  ]
 })
 export class StudentsPanelModule {
 }

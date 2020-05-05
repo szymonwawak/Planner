@@ -9,12 +9,17 @@ class Subject extends Model
 {
     protected $table = 'subject';
     public $timestamps = false;
-    protected $fillable =[
+    protected $fillable = [
         'name',
     ];
 
-    public function teacherSubjects(){
+    public function teacherSubjects()
+    {
         return $this->hasMany("App\Models\TeacherSubject");
     }
 
+    public function studentConsultations()
+    {
+        return $this->hasMany("App\Models\StudentConsultation");
+    }
 }

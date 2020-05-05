@@ -4,6 +4,8 @@ import {Subject} from "../../../students-panel/components/search-panel/search-pa
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {CreateSubjectDialogComponent} from "../create-subject-dialog/create-subject-dialog.component";
 import {EditStudentsConsultationComponent} from "../edit-students-consultation/edit-students-consultation.component";
+import {ConsultationScheme} from "../consultations-schedule/consultations-schedule.component";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-incoming-consultations',
@@ -14,6 +16,9 @@ export class IncomingConsultationsComponent implements OnInit {
 
   public studentsConsultations: StudentsConsultation[];
   public studentsConsultation: StudentsConsultation;
+  paginatedStudentConsultations: StudentsConsultation[];
+  pageSize: number = 10;
+  length: number;
 
   constructor(private apiService: ApiService, private dialog: MatDialog) {
   }
@@ -39,15 +44,21 @@ export class IncomingConsultationsComponent implements OnInit {
     this.apiService.getCurrentUserStudentsConsultations(this.model).subscribe(
       res => {
         this.studentsConsultations = res;
+        this.paginatedStudentConsultations = this.studentsConsultations.slice(0, this.pageSize)
+        this.length = this.studentsConsultations.length;
       },
       err => {
-
+        alert(err.error.message);
       }
     )
   }
 
+  setConsultation(consultation: StudentsConsultation) {
+    this.studentsConsultation = consultation;
+  }
+
   acceptConsultation(): void {
-    let consultation: StudentsConsultation = this.studentsConsultation[0];
+    let consultation: StudentsConsultation = this.studentsConsultation;
     consultation.accepted = true;
     this.apiService.updateStudentsConsultations(consultation).subscribe(
       res => {
@@ -64,8 +75,13 @@ export class IncomingConsultationsComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '450px';
-    dialogConfig.data = this.studentsConsultation[0];
+    dialogConfig.data = this.studentsConsultation;
     this.dialog.open(EditStudentsConsultationComponent, dialogConfig);
+  }
+
+  changePage(event: PageEvent): void {
+    let offset = event.pageSize * event.pageIndex;
+    this.paginatedStudentConsultations = this.studentsConsultations.slice(offset, offset + this.pageSize);
   }
 }
 
@@ -74,9 +90,8 @@ export class Dates {
   end_date: String;
 }
 
-export interface StudentsConsultation {
-  id: number,
-  consultation_id: number;
+export class StudentsConsultation {
+  id: number;
   student_name: string;
   student_surname: string;
   student_email: string;

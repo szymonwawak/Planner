@@ -16,19 +16,16 @@ class Consultation extends Model
         'end_date',
         'day'
     ];
-    protected $hidden = [
-        "pvt"
-    ];
 
     public function teacherSubject()
     {
         return $this->belongsTo("App\Models\Teacher");
     }
 
-    public function studentConsultation()
+    public function studentConsultations()
     {
 
-        return $this->hasMany("App\Models\StudentConsultation");
+        return $this->hasMany("App\Models\StudentConsultation")->with('subject');
     }
 
 }

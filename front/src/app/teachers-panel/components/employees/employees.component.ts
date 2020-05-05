@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {Teacher} from "../../../students-panel/components/search-panel/search-panel.component";
 import {ApiService} from "../../../shared/api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ConsultationScheme} from "../consultations-schedule/consultations-schedule.component";
+import {PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-employees',
@@ -12,6 +14,9 @@ export class EmployeesComponent implements OnInit {
 
   teachers: Teacher[];
   teacher: Teacher;
+  paginatedTeachers: Teacher[];
+  pageSize: number = 10;
+  length: number;
   disabled: boolean = true;
   createUserForm: FormGroup;
 
@@ -32,6 +37,8 @@ export class EmployeesComponent implements OnInit {
     this.apiService.getAllTeachers().subscribe(
       res => {
         this.teachers = res;
+        this.paginatedTeachers = this.teachers.slice(0, this.pageSize)
+        this.length = this.teachers.length;
       },
       err => {
         alert(err.error.message);
@@ -91,5 +98,10 @@ export class EmployeesComponent implements OnInit {
     for (let controlsKey in this.createUserForm.controls) {
       this.createUserForm.controls[controlsKey].disable();
     }
+  }
+
+  changePage(event: PageEvent): void {
+    let offset = event.pageSize * event.pageIndex;
+    this.paginatedTeachers = this.teachers.slice(offset, offset + this.pageSize);
   }
 }
