@@ -18,6 +18,7 @@ class Teacher extends Model
     ];
     protected $hidden = [
         'password',
+        'pivot',
     ];
 
     public function subjects()

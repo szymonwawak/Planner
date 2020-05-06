@@ -1,0 +1,41 @@
+<h2 mat-dialog-title></h2>
+<form #f="ngForm">
+  <mat-dialog-content>
+    <mat-form-field>
+      <label>Data od:</label>
+      <input matInput name="dateFrom" [matDatepicker]="dateFrom" [(ngModel)]="consultationScheme.start_date" required>
+      <mat-datepicker-toggle matSuffix [for]="dateFrom"></mat-datepicker-toggle>
+      <mat-datepicker #dateFrom></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <label>Data do:</label>
+      <input matInput name="dateTo" [matDatepicker]="dateTo" [(ngModel)]="consultationScheme.end_date" required>
+      <mat-datepicker-toggle matSuffix [for]="dateTo"></mat-datepicker-toggle>
+      <mat-datepicker #dateTo></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Dzień tygodnia w który będą odbywać się konsultacje</mat-label>
+      <mat-select [(ngModel)]="consultationScheme.day" name="consultationDay" required>
+        <mat-option *ngFor="let day of days; let i = index"
+                    [value]="i">{{day}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <label>Czas rozpoczęcia:</label>
+    <timepicker [(ngModel)]="startTime" name="startTime" [minuteStep]="10" [arrowkeys]="true" [showMeridian]="false"
+                (ngModelChange)="checkMinutes(startTime)" [required]="true"></timepicker>
+    <label>Czas zakończenia:</label>
+    <timepicker [(ngModel)]="endTime" name="endTime" [minuteStep]="10" [arrowkeys]="true" [showMeridian]="false"
+                disabled></timepicker>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="submit" mat-raised-button color="primary" (click)="save()" [disabled]="f.invalid">
+      <mat-icon fontSet="material-icons-outlined">done</mat-icon>
+      Zapisz
+    </button>
+    <button mat-raised-button color="warn" (click)="close()">
+      <mat-icon fontSet="material-icons-outlined">cancel</mat-icon>
+      Anuluj
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -5,7 +5,7 @@
   <mat-divider></mat-divider>
   <mat-card-content>
     <mat-selection-list [multiple]="false">
-      <mat-list-option class="h-auto mb-2" *ngFor="let studentsConsultation of studentsConsultations"
+      <mat-list-option class="h-auto mb-2" *ngFor="let studentsConsultation of paginatedStudentConsultations"
                        (click)="setConsultation(studentsConsultation)">
         <span><b>Przedmiot:</b> {{studentsConsultation.subject.name}}</span>
         <span><b>Imię i nazwisko studenta:</b> {{studentsConsultation.student_name}} {{studentsConsultation.student_surname}}
@@ -20,7 +20,7 @@
                    [length]="length"></mat-paginator>
     <div align="end">
       <button mat-raised-button color="primary" class="m-3"
-              [disabled]="!studentsConsultation || studentsConsultation.accepted"
+              [disabled]="!studentsConsultation || studentsConsultation.accepted == true"
               (click)="acceptConsultation()">
         <mat-icon fontSet="material-icons-outlined">done</mat-icon>
         Zaakceptuj konsultację

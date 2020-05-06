@@ -22,10 +22,4 @@ class Consultation extends Model
         return $this->belongsTo("App\Models\Teacher");
     }
 
-    public function studentConsultations()
-    {
-
-        return $this->hasMany("App\Models\StudentConsultation")->with('subject');
-    }
-
 }

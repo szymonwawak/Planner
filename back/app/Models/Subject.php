@@ -13,6 +13,11 @@ class Subject extends Model
         'name',
     ];
 
+    public function teachers()
+    {
+        return $this->belongsToMany("App\Models\Teacher", 'teacher_subject');
+    }
+
     public function teacherSubjects()
     {
         return $this->hasMany("App\Models\TeacherSubject");

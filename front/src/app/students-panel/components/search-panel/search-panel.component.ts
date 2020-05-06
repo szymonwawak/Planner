@@ -1,6 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {LessonModel} from "../planner-view/planner-view.component";
 import {ApiService} from "../../../shared/api.service";
+import {ConsultationScheme} from "../../../teachers-panel/components/consultations-schedule/consultations-schedule.component";
+import {StudentsConsultation} from "../../../teachers-panel/components/incoming-consultations/incoming-consultations.component";
+import {EventInput} from "@fullcalendar/core/structs/event";
 
 @Component({
   selector: 'app-search-panel',
@@ -10,7 +13,6 @@ import {ApiService} from "../../../shared/api.service";
 export class SearchPanelComponent implements OnInit {
 
   subjects: Array<Subject>;
-
   teachers: Array<Teacher>;
 
   @Input() lessonModel: LessonModel;
@@ -41,7 +43,7 @@ export class SearchPanelComponent implements OnInit {
     if (this.lessonModel.subject == null)
       return this.teachers;
     else
-      return this.teachers.filter(item => item.subjects.indexOf(this.lessonModel.subject) != -1);
+      return this.teachers.filter((item) => item.subjects.find(({name}) => name == this.lessonModel.subject.name));
   }
 
   getTeachers(): void {
@@ -64,6 +66,14 @@ export class SearchPanelComponent implements OnInit {
         alert("Wystąpił błąd");
       }
     )
+  }
+
+  @Output() onSelect = new EventEmitter<boolean>();
+
+  loadCalendar() {
+    if (this.lessonModel.teacher) {
+      this.onSelect.emit();
+    }
   }
 }
 

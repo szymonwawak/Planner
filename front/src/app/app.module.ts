@@ -20,11 +20,14 @@ import {EmployeesComponent} from "./teachers-panel/components/employees/employee
 import {SettingsComponent} from "./teachers-panel/components/settings/settings.component";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {JWTInterceptor} from "./shared/jwt.interceptor";
+import {AuthGuardService} from "./shared/auth-guard.service";
+import {AuthService} from "./auth/auth.service";
+import {JwtModule} from "@auth0/angular-jwt";
 
 const appRoutes: Routes = [
   {path: 'planner', component: PlannerViewComponent},
   {
-    path: 'panel', component: PanelViewComponent, children: [
+    path: 'panel', component: PanelViewComponent, canActivate: [AuthGuardService], children: [
       {path: "", redirectTo: "dashboard", pathMatch: "full"},
       {path: "dashboard", component: DashboardComponent},
       {path: "employees", component: EmployeesComponent},
@@ -50,10 +53,18 @@ const appRoutes: Routes = [
     MatButtonModule,
     StudentsPanelModule,
     TeachersPanelModule,
-    FullCalendarModule
+    FullCalendarModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: function tokenGetter() {
+          return localStorage.getItem('token');
+        }
+      }
+    })
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: JWTInterceptor, multi: true},
+    AuthGuardService, AuthService
   ],
   bootstrap: [AppComponent]
 })

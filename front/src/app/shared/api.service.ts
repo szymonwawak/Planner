@@ -27,6 +27,7 @@ export class ApiService {
   getCurrentUserData(): Observable<Teacher> {
     return this.http.get<Teacher>(this.TEACHERS_URL + '/currentUser');
   }
+
   getAllTeachers(): Observable<Teacher[]> {
     return this.http.get<Teacher[]>(this.TEACHERS_URL);
   }
@@ -34,6 +35,7 @@ export class ApiService {
   updateTeacher(teacher: Teacher): Observable<any> {
     return this.http.put<any>(this.TEACHERS_URL + '/' + teacher.id, teacher);
   }
+
   getAllSubjects(): Observable<Subject[]> {
     return this.http.get<Subject[]>(this.SUBJECTS_URL);
   }
@@ -73,6 +75,7 @@ export class ApiService {
   getConsultationSchemes(data): Observable<StudentsConsultation[]> {
     return this.http.post<StudentsConsultation[]>(this.TEACHERS_URL + '/studentConsultations', data)
   }
+
   createConsultationScheme(scheme: ConsultationScheme): Observable<any> {
     return this.http.post(this.CONSULTATIONS_URL, scheme)
   }
@@ -88,11 +91,20 @@ export class ApiService {
   createStudentConsultation(studentsConsultation: StudentsConsultation): Observable<any> {
     return this.http.post<any>(this.STUDENTS_CONSULTATIONS_URL, studentsConsultation);
   }
+
   getCurrentUserStudentsConsultations(model: Dates): Observable<any> {
     return this.http.post<any>(this.TEACHERS_URL + '/' + 'studentConsultations', model)
   }
 
   updateStudentsConsultations(studentsConsultation: StudentsConsultation): Observable<any> {
     return this.http.put<any>(this.STUDENTS_CONSULTATIONS_URL + '/' + studentsConsultation.id, studentsConsultation);
+  }
+
+  getConsultationSchemesByTeacherId(teacher_id: string): Observable<ConsultationScheme[]> {
+    return this.http.post<ConsultationScheme[]>(this.CONSULTATIONS_URL + '/' + 'consultationsById', {'teacher_id': teacher_id})
+  }
+
+  getStudentsConsultationsByTeacherId(teacher_id: string): Observable<StudentsConsultation[]> {
+    return this.http.post<StudentsConsultation[]>(this.STUDENTS_CONSULTATIONS_URL + '/' + 'consultationsById', {'teacher_id': teacher_id})
   }
 }

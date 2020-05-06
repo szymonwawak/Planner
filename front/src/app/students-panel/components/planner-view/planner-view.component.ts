@@ -7,8 +7,8 @@ import {ApiService} from "../../../shared/api.service";
 import {StudentsConsultation} from "../../../teachers-panel/components/incoming-consultations/incoming-consultations.component";
 import {FullCalendarComponent} from "@fullcalendar/angular";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {EditStudentsConsultationComponent} from "../../../teachers-panel/components/edit-students-consultation/edit-students-consultation.component";
 import {CreateStudentConsultationDialogComponent} from "../create-student-consultation-dialog/create-student-consultation-dialog.component";
+import {ConsultationScheme} from "../../../teachers-panel/components/consultations-schedule/consultations-schedule.component";
 
 @Component({
   selector: 'app-planner-view',
@@ -22,52 +22,35 @@ export class PlannerViewComponent implements OnInit {
 
   calendarPlugins = [timeGridPlugin, interactionPlugin];
   events: EventInput[] = [];
+  teacherEvents: EventInput[] = [];
   consultations;
-
-  constructor(private apiService: ApiService, public viewContainerRef: ViewContainerRef, private dialog: MatDialog) {
-  }
-
-
-  initConsultations() {
-    this.apiService.getConsultationSchemes({
-      start_date: this.calendarValidStart(),
-      end_date: this.calendarValidEnd(),
-      teacher_id: 2
-    }).subscribe(
-      res => {
-        this.consultations = res;
-        this.prepareEvents();
-      }, err => {
-        alert('Błąd!');
-      }
-    )
-  }
-
-  openNewEventDialog(event) {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '450px';
-    dialogConfig.data = event;
-    this.dialog.open(CreateStudentConsultationDialogComponent, dialogConfig);
-  }
-
-  prepareEvents(): void {
-    let events = [];
-    this.consultations.forEach(function (value: StudentsConsultation) {
-      this.push({
-        title: value.subject.name,
-        start: value.date + 'T' + value.start_time,
-        end: value.date + 'T' + value.finish_time
-      })
-    }, events);
-    this.events = events;
-  }
 
   lessonModel: LessonModel = {
     teacher: null,
     subject: null
   };
+
+  consultationSchemes: ConsultationScheme[];
+  studentConsultations: StudentsConsultation[];
+
+  constructor(private apiService: ApiService, public viewContainerRef: ViewContainerRef, private dialog: MatDialog) {
+  }
+
+  openNewEventDialog(event) {
+    if (this.events.filter((el) => this.events.find(
+      () => el.color == '#60c04f') && el.daysOfWeek.indexOf(event.start.getDay()) != -1 &&
+      event.start.toLocaleTimeString() >= el.startTime && event.end.toLocaleTimeString() <= el.endTime).length > 0
+    ) {
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.disableClose = true;
+      dialogConfig.autoFocus = true;
+      dialogConfig.width = '450px';
+      dialogConfig.data = event;
+      this.dialog.open(CreateStudentConsultationDialogComponent, dialogConfig).afterClosed().subscribe(
+        () => this.loadCalendar()
+      );
+    }
+  }
 
   calendarValidStart() {
     return new Date();
@@ -87,7 +70,57 @@ export class PlannerViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.validDate = {start: this.calendarValidStart(), end: this.calendarValidEnd()}
-    this.initConsultations();
+  }
+
+  loadCalendar(): void {
+    let id = this.lessonModel.teacher.id;
+    this.events = [];
+    this.apiService.getConsultationSchemesByTeacherId(id).subscribe(
+      res => {
+        this.consultationSchemes = res;
+        this.prepareConsultationSchemes();
+      },
+      err => {
+
+      }
+    );
+    this.apiService.getStudentsConsultationsByTeacherId(id).subscribe(
+      res => {
+        this.studentConsultations = res;
+        this.prepareEvents();
+      },
+      err => {
+
+      }
+    );
+  }
+
+  prepareConsultationSchemes(): void {
+    let events = [];
+    this.consultationSchemes.forEach(function (value: ConsultationScheme) {
+      this.push({
+        startRecur: value.start_date,
+        endRecur: value.end_date,
+        daysOfWeek: [value.day],
+        startTime: value.start_time,
+        endTime: value.finish_time,
+        rendering: 'background',
+        color: '#60c04f'
+      })
+    }, events);
+    this.events = this.events.concat(events);
+  }
+
+  prepareEvents(): void {
+    let events = [];
+    this.studentConsultations.forEach(function (value: StudentsConsultation) {
+      this.push({
+        title: value.subject.name,
+        start: value.date + 'T' + value.start_time,
+        end: value.date + 'T' + value.finish_time
+      })
+    }, events);
+    this.events = this.events.concat(events);
   }
 }
 

@@ -7,11 +7,12 @@ import {Teacher} from "./search-panel.component";
 export class TeacherSearchPipe implements PipeTransform {
   transform(teachers: Teacher[], text: string): Teacher[] {
     let filteredTeachers = [];
-    for (let teacher of teachers) {
-      let mergedName: string = teacher.name + ' ' + teacher.surname;
-      if (mergedName.toLowerCase().includes(text.toLowerCase()))
-        filteredTeachers.push(teacher);
-    }
+    if (text != '')
+      for (let teacher of teachers) {
+        let mergedName: string = teacher.name + ' ' + teacher.surname;
+        if (mergedName.toLowerCase().includes(text.toLowerCase()))
+          filteredTeachers.push(teacher);
+      }
     return filteredTeachers;
   }
 }

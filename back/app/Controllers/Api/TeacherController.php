@@ -5,6 +5,7 @@ namespace App\Controllers\Api;
 
 use App\Controllers\Controller;
 use App\Models\Consultation;
+use App\Models\StudentConsultation;
 use App\Models\Subject;
 use App\Models\TeacherSubject;
 use DateTime;
@@ -81,16 +82,9 @@ class TeacherController extends Controller
         $data = $request->getParsedBody();
         $dateFrom = new DateTime($data['start_date']);
         $dateTo = new DateTime($data['end_date']);
-        $consultationSchedules = Consultation::where('teacher_id', $userId)->get();
-        $consultations = array();
-        foreach ($consultationSchedules as $schedule) {
-            $studentConsultations = $schedule->studentConsultations
-                ->where('date', '>=', $dateFrom->format('Y-m-d'))
-                ->where('date', '<=', $dateTo->format('Y-m-d'));
-            foreach ($studentConsultations as $studentConsultation) {
-                $consultations[] = $studentConsultation;
-            }
-        }
+        $consultations = StudentConsultation::where('teacher_id', $userId)
+            ->where('date', '>=', $dateFrom->format('Y-m-d'))
+            ->where('date', '<=', $dateTo->format('Y-m-d'))->with('subject')->get();
         return $response->withStatus(201)->withJson($consultations);
     }
 

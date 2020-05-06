@@ -20,6 +20,12 @@ class ConsultationController extends Controller
         return $response->getBody()->write(Consultation::all()->toJson());
     }
 
+    public function getByTeacherId(Request $request, Response $response)
+    {
+        $data = $request->getParsedBody();
+        return $response->getBody()->write(Consultation::where('teacher_id', $data['teacher_id'])->get()->toJson());
+    }
+
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
@@ -33,14 +39,24 @@ class ConsultationController extends Controller
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
+        $startDate = new DateTime($data['start_date']);
+        $startDate = date('Y-m-d', $startDate);
+        $endDate = new DateTime($data['end_date']);
+        $endDate = date('Y-m-d', $endDate);
         if ($data['start_time'] >= $data['finish_time'])
             return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Błędnie podany czas konsultacji']);
+
+        if ($startDate >= $endDate)
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Błędnie podana data konsultacji']);
 
         $startTime = new DateTime($data['start_time']);
         $endTime = new DateTime($data['finish_time']);
         $timeDifference = $endTime->getTimestamp() - $startTime->getTimestamp();
         if ($timeDifference > 3600)
             return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Czas konsultacji nie może przekraczać jednej godziny.']);
+
+        if ($timeDifference < 0)
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Podano błędne daty!.']);
 
         $teacherId = $data['teacher_id'] ?: Utils::getUserIdfromToken($request);
         if (Consultation::where('day', '=', $data['day'])->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->where('teacher_id', $teacherId)->count() > 0) {

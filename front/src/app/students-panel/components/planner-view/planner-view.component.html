@@ -15,17 +15,15 @@
   </div>
   <div class="col-lg-10 row justify-content-between m-auto pt-5">
     <div class="col-3">
-      <app-search-panel [lessonModel]="lessonModel"></app-search-panel>
+      <app-search-panel [lessonModel]="lessonModel" (onSelect)="loadCalendar()"></app-search-panel>
     </div>
     <div class="col-8">
-      <div disabled="true" aria-hidden="true">
+      <div>
       <full-calendar
+        [eventOverlap]="false"
         #calendarComponent
-        aria-disabled="true"
-        aria-hidden="true"
         [allDaySlot]=false
         [plugins]="calendarPlugins"
-        [editable]="true"
         [height]="600"
         [validRange]="validDate"
         [selectable]="true"

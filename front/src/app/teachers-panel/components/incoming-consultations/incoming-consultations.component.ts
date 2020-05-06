@@ -17,7 +17,7 @@ export class IncomingConsultationsComponent implements OnInit {
   public studentsConsultations: StudentsConsultation[];
   public studentsConsultation: StudentsConsultation;
   paginatedStudentConsultations: StudentsConsultation[];
-  pageSize: number = 10;
+  pageSize: number = 8;
   length: number;
 
   constructor(private apiService: ApiService, private dialog: MatDialog) {
@@ -100,4 +100,6 @@ export class StudentsConsultation {
   finish_time: string;
   accepted: boolean;
   subject: Subject;
+  teacher_id: number;
+  subject_id: number;
 }
