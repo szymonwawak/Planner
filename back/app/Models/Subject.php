@@ -9,17 +9,22 @@ class Subject extends Model
 {
     protected $table = 'subject';
     public $timestamps = false;
-    protected $fillable =[
-
+    protected $fillable = [
         'name',
     ];
-    protected  $hidden=[
-        "pvt"
-    ];
 
-    public function teacherSubjects(){
+    public function teachers()
+    {
+        return $this->belongsToMany("App\Models\Teacher", 'teacher_subject');
+    }
 
+    public function teacherSubjects()
+    {
         return $this->hasMany("App\Models\TeacherSubject");
     }
 
+    public function studentConsultations()
+    {
+        return $this->hasMany("App\Models\StudentConsultation");
+    }
 }

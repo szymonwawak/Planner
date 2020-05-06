@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Wyszukaj interesujący cię przedmiot i prowadzącego</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field>
+      <input matInput placeholder="Wyszukaj prowadzącego:" [(ngModel)]="search" [value]="" id="search">
+    </mat-form-field>
+    <div [hidden]="search">
+      <p><b>lub</b></p>
+      <mat-form-field>
+        <mat-label>Wybierz prowadzącego z listy:</mat-label>
+        <mat-select [(ngModel)]="lessonModel.teacher" [value]="lessonModel.teacher">
+          <mat-option [value]="null">----------------</mat-option>
+          <mat-option *ngFor="let teacher of filterTeachers()"
+                      [value]="teacher">{{teacher.name}} {{teacher.surname}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Wybierz przedmiot:</mat-label>
+        <mat-select [(ngModel)]="lessonModel.subject" [value]="lessonModel.subject" (ngModelChange)="loadCalendar()">
+          <mat-option [value]="null">----------------</mat-option>
+          <mat-option *ngFor="let subject of filterSubjects()" [value]="subject">{{subject.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div [hidden]="!search">
+      <div *ngFor="let teacher of teachers | teacherSearch: search" class="teacher-container mat-option">
+        <a (click)="setTeacher(teacher)" class="mat-option-text">
+          {{teacher.name}}
+          {{teacher.surname}}
+        </a>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

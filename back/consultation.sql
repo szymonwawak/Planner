@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 29 Kwi 2020, 19:40
+-- Czas generowania: 01 Maj 2020, 12:22
 -- Wersja serwera: 10.4.11-MariaDB
--- Wersja PHP: 7.4.3
+-- Wersja PHP: 7.2.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -43,9 +43,7 @@ CREATE TABLE `consultation_scheme` (
 --
 
 INSERT INTO `consultation_scheme` (`id`, `teacher_subject_id`, `start_time`, `finish_time`, `day`, `start_date`, `end_date`) VALUES
-(1, 1, '11:00:00', '12:00:00', 4, '2020-04-30', '2020-05-31'),
-(2, 2, '10:00:00', '11:00:00', 1, '2020-04-22', '2020-05-15'),
-(3, 1, '12:00:00', '13:00:00', 5, '2020-05-01', '2020-05-30');
+(2, 2, '10:00:00', '11:00:00', 1, '2020-04-22', '2020-05-15');
 
 -- --------------------------------------------------------
 
@@ -59,6 +57,7 @@ CREATE TABLE `student_consultation` (
   `student_name` varchar(40) NOT NULL,
   `student_surname` varchar(40) NOT NULL,
   `student_email` varchar(40) NOT NULL,
+  `date` date NOT NULL,
   `start_time` time NOT NULL,
   `finish_time` time NOT NULL,
   `accepted` tinyint(1) NOT NULL DEFAULT 0
@@ -68,8 +67,8 @@ CREATE TABLE `student_consultation` (
 -- Zrzut danych tabeli `student_consultation`
 --
 
-INSERT INTO `student_consultation` (`id`, `consultation_id`, `student_name`, `student_surname`, `student_email`, `start_time`, `finish_time`, `accepted`) VALUES
-(1, 2, 'Adam', 'Kwiat', 'kwiat.adam@gmail.com', '10:00:00', '10:10:00', 0);
+INSERT INTO `student_consultation` (`id`, `consultation_id`, `student_name`, `student_surname`, `student_email`, `date`, `start_time`, `finish_time`, `accepted`) VALUES
+(1, 2, 'Adam', 'Kwiat', 'kwiat.adam@gmail.com', '2020-05-02', '10:00:00', '10:10:00', 1);
 
 -- --------------------------------------------------------
 
@@ -131,9 +130,8 @@ CREATE TABLE `teacher_subject` (
 --
 
 INSERT INTO `teacher_subject` (`id`, `teacher_id`, `subject_id`) VALUES
-(1, 1, 1),
 (2, 2, 2),
-(3, 1, 2);
+(6, 1, 1);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -193,7 +191,7 @@ ALTER TABLE `student_consultation`
 -- AUTO_INCREMENT dla tabeli `subject`
 --
 ALTER TABLE `subject`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `teacher`
@@ -205,7 +203,7 @@ ALTER TABLE `teacher`
 -- AUTO_INCREMENT dla tabeli `teacher_subject`
 --
 ALTER TABLE `teacher_subject`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ograniczenia dla zrzutów tabel

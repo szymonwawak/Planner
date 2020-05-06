@@ -1,9 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~bootstrap/dist/css/bootstrap.css";
+@import '~@angular/cdk/overlay-prebuilt.css';
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+@import '~@fullcalendar/timegrid/main.css';
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #eeeeee;
+}
 
 mat-form-field {
   display: block !important;
+}
+
+mat-card {
+  padding: 0 !important;
+}
+
+mat-card-content {
+  padding: 16px 16px 0 16px;
+}
+
+.mat-card-header {
+  padding-top: 16px;
+  padding-left: 16px;
+}
+
+mat-card-header.pink-card {
+  background-color: #ff79b0;
+}
+
+mat-card-header.blue-card {
+  background-color: #9aa8f9;
+}
+
+mat-card-header.dark-blue-card {
+  background-color: #6879c6;
 }

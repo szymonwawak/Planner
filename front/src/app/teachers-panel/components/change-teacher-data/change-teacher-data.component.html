@@ -1,0 +1,36 @@
+<mat-card>
+  <mat-card-header class="dark-blue-card">
+    <mat-card-title>Twoje dane:</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form #f="ngForm">
+      <mat-form-field>
+        <mat-label>Imię</mat-label>
+        <input type="text" name="name" matInput [(ngModel)]="teacher.name" #name='ngModel' required>
+        <div *ngIf="(name.invalid && name.touched)">
+          <small *ngIf="name.errors?.required" class="text-danger">To pole jest wymagane</small>
+        </div>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Nazwisko</mat-label>
+        <input type="text" name="surname" matInput [(ngModel)]="teacher.surname" #surname='ngModel' required>
+        <div *ngIf="(surname.invalid && surname.touched)">
+          <small *ngIf="surname.errors?.required" class="text-danger">To pole jest wymagane</small>
+        </div>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>E-mail</mat-label>
+        <input type="email" name="email" matInput [(ngModel)]="teacher.email" #email='ngModel' required>
+        <div *ngIf="(email.invalid && email.touched)">
+          <small *ngIf="email.errors?.required" class="text-danger">To pole jest wymagane</small>
+        </div>
+      </mat-form-field>
+    </form>
+    <div align="end">
+      <button mat-raised-button color="primary" class="m-3"  [disabled]="!f.valid" (click)="saveTeacherData()">
+        <mat-icon fontSet="material-icons-outlined ">done</mat-icon>
+        Zapisz
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

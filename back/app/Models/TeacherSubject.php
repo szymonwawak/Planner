@@ -11,21 +11,18 @@ class TeacherSubject extends Model
     protected $table = 'teacher_subject';
     public $timestamps = false;
 
-    protected $hidden=[
+    protected $hidden = [
         "pvt"
     ];
 
-    public function consultation(){
-
-        return $this->hasMany("App\Models\Consultation");
-    }
-    public function teachers(){
-
+    public function teacher()
+    {
         return $this->belongsTo("App\Models\Teacher");
     }
-    public function subjects(){
 
-        return $this->belongsTo("App\Models\Subject");
+    public function subject()
+    {
+        return $this->belongsTo("App\Models\Subject", 'subject_id');
     }
 
 }

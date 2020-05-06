@@ -7,7 +7,7 @@
       <form #f="ngForm" (ngSubmit)="f.valid && login()">
         <mat-form-field>
           <mat-label>E-mail</mat-label>
-          <input matInput type="email" name="mail" required [(ngModel)]="model.mail" #mail="ngModel">
+          <input matInput type="email" name="mail" required [(ngModel)]="model.email" #mail="ngModel">
           <div *ngIf="(mail.invalid && mail.touched)">
             <small *ngIf="mail.errors?.required" class="text-danger">Adres jest wymagany</small>
           </div>

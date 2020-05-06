@@ -16,13 +16,18 @@ class Teacher extends Model
         'surname',
         'first_login'
     ];
-    protected  $hidden=[
+    protected $hidden = [
         'password',
-
+        'pivot',
     ];
 
-    public function teacherSubjects(){
+    public function subjects()
+    {
+        return $this->belongsToMany("App\Models\Subject", 'teacher_subject')->withPivot('id');
+    }
 
-        return $this->hasMany("App\Models\TeacherSubject");
+    public function consultations()
+    {
+        return $this->hasMany("App\Models\Consultations");
     }
 }

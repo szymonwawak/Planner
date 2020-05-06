@@ -1,0 +1,12 @@
+mat-card {
+  padding: 0;
+}
+
+mat-card-content {
+  padding: 16px 16px 0 16px;
+}
+mat-card-header {
+  padding-top: 16px;
+  padding-left: 16px;
+  background-color: #6879c6;
+}

@@ -20,6 +20,12 @@ class ConsultationController extends Controller
         return $response->getBody()->write(Consultation::all()->toJson());
     }
 
+    public function getByTeacherId(Request $request, Response $response)
+    {
+        $data = $request->getParsedBody();
+        return $response->getBody()->write(Consultation::where('teacher_id', $data['teacher_id'])->get()->toJson());
+    }
+
     public function getSingle(Request $request, Response $response, $args)
     {
         $id = $args['id'];
@@ -33,20 +39,31 @@ class ConsultationController extends Controller
     public function create(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
+        $startDate = new DateTime($data['start_date']);
+        $startDate = date('Y-m-d', $startDate);
+        $endDate = new DateTime($data['end_date']);
+        $endDate = date('Y-m-d', $endDate);
         if ($data['start_time'] >= $data['finish_time'])
-            return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Błędnie podany czas konsultacji']);
+
+        if ($startDate >= $endDate)
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Błędnie podana data konsultacji']);
 
         $startTime = new DateTime($data['start_time']);
         $endTime = new DateTime($data['finish_time']);
         $timeDifference = $endTime->getTimestamp() - $startTime->getTimestamp();
         if ($timeDifference > 3600)
-            return $response->withStatus(400)->getBody()->write("Czas konsultacji nie może przekraczać jednej godziny.");
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Czas konsultacji nie może przekraczać jednej godziny.']);
 
-        if (Consultation::where('day', '=', $data['day'])->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->where('teacher_subject_id', $data['teacher_subject_id'])->count() > 0) {
-            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+        if ($timeDifference < 0)
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Podano błędne daty!.']);
+
+        $teacherId = $data['teacher_id'] ?: Utils::getUserIdfromToken($request);
+        if (Consultation::where('day', '=', $data['day'])->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->where('teacher_id', $teacherId)->count() > 0) {
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Termin konsultacji jest niedostępny']);
         }
-        if (Consultation::where('day', '=', $data['day'])->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->where('teacher_subject_id', $data['teacher_subject_id'])->count() > 0) {
-            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+        if (Consultation::where('day', '=', $data['day'])->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->where('teacher_id', $teacherId)->count() > 0) {
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Termin konsultacji jest niedostępny']);
         }
 
         $consult = new Consultation();
@@ -55,21 +72,21 @@ class ConsultationController extends Controller
         $consult->start_date = $data['start_date'];
         $consult->start_time = $data['start_time'];
         $consult->finish_time = $data['finish_time'];
-        $consult->teacher_subject_id = $data['teacher_subject_id'];
+        $consult->teacher_id = $teacherId;
         $consult->save();
 
-        return $response->withStatus(201)->getBody()->write($consult->toJson());
+        return $response->withStatus(201)->withJson(['success' => true, 'message' => 'Pomyślnie utworzono schemat konsultacji']);
     }
 
     public function delete(Request $request, Response $response, $args)
     {
         $id = $args['id'];
-        $consult = Consultation::where('id', $id)->first();
-        if ($consult != null) {
-            $consult->delete();
-            return $response->withStatus(200);
+        $consultation = Consultation::find($id);
+        if ($consultation) {
+            $consultation->delete();
+            return $response->withStatus(201);
         }
-        return $response->withStatus(404)->getBody()->write("Brak rekordu o podanym id");
+        return $response->withStatus(404)->withJson(['error' => true, 'message' => 'Brak rekordu o podanym id']);
     }
 
     public function update(Request $request, Response $response, $args)
@@ -81,21 +98,21 @@ class ConsultationController extends Controller
         if (!($consult->start_time == $data['start_time'] && $consult->finish_time == $data['finish_time'])) {
 
             if ($data['start_time'] >= $data['finish_time'])
-                return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
+                return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Błędnie podany czas konsultacji']);
 
             $startTime = new DateTime($data['start_time']);
             $endTime = new DateTime($data['finish_time']);
             $timeDifference = $endTime->getTimestamp() - $startTime->getTimestamp();
             if ($timeDifference > 3600)
-                return $response->withStatus(400)->getBody()->write("Czas konsultacji nie może przekraczać jednej godziny.");
+                return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Czas konsultacji nie może przekraczać jednej godziny.']);
+            $teacherId = $data['teacher_id'] ?: Utils::getUserIdfromToken($request);
+            if (Consultation::where('start_time', '!=', $consult->start_time)->where('finish_time', '!=', $consult->finish_time)->where('day', '=', $data['day'])->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->where('teacher_id', $teacherId)->count() > 0) {
 
-            if (Consultation::where('start_time', '!=', $consult->start_time)->where('finish_time', '!=', $consult->finish_time)->where('day', '=', $data['day'])->where('start_time', '<=', $data['start_time'])->where("finish_time", ">", $data['start_time'])->where('teacher_subject_id', $data['teacher_subject_id'])->count() > 0) {
-
-                return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+                return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Termin konsultacji jest niedostępny']);
             }
-            if (Consultation::where('start_time', '!=', $consult->start_time)->where('finish_time', '!=', $consult->finish_time)->where('day', '=', $data['day'])->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->where('teacher_subject_id', $data['teacher_subject_id'])->count() > 0) {
+            if (Consultation::where('start_time', '!=', $consult->start_time)->where('finish_time', '!=', $consult->finish_time)->where('day', '=', $data['day'])->where('finish_time', '>=', $data['finish_time'])->where("start_time", "<", $data['finish_time'])->where('teacher_id', $teacherId)->count() > 0) {
 
-                return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+                return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Termin konsultacji jest niedostępny']);
             }
         }
 
@@ -104,11 +121,11 @@ class ConsultationController extends Controller
         $consult->end_date = $data['end_date'] ?: $consult->end_date;
         $consult->start_time = $data['start_time'] ?: $consult->start_time;
         $consult->finish_time = $data['finish_time'] ?: $consult->finish_time;
-        $consult->teacher_subject_id = $data['teacher_subject_id'] ?: $consult->teacher_subject_id;
+        $consult->teacher_id = $data['teacher_id'] ?: $consult->teacher_id;
 
         $consult->save();
 
-        return $response->withStatus(201)->getBody()->write($consult->toJson());
+        return $response->withStatus(201)->withJson(['success' => true, 'message' => 'Pomyślnie zaktualizowano schemat konsultacji']);
     }
 
     public function getConsultations(Request $request, Response $response, $args)
@@ -136,12 +153,12 @@ class ConsultationController extends Controller
         $data = $request->getParsedBody();
         $studentConsultationsArray = array();
         $userId = Utils::getUserIdfromToken($request);
-        if (!$data["teacher_id"] == null) {
+        if ($data["teacher_id"] != null) {
             $userId = $data["teacher_id"];
         }
 
         $consultations = Consultation::where('start_date', '>', $data['start_date'])->where('end_date', '<', $data['end_date'])->whereHas('teacherSubject', function ($query) use ($userId) {
-            $query->where("teacher_subject_id", $userId);
+            $query->where("teacher_id", $userId);
         })->get();
 
 
