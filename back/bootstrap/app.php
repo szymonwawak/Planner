@@ -59,8 +59,7 @@ $container ['ConsultationController'] = function ($container) {
 };
 $container ['ConsultationStudentController'] = function ($container) {
 
-    return new App\Controllers\Api\ConsultationStudentController($container);
+    return new App\Controllers\Api\StudentConsultationController($container);
 };
 
-require __DIR__ . '/../app/middleware.php';
 require __DIR__ . '/../app/routes.php';

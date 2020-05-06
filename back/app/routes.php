@@ -9,10 +9,10 @@ $app->group('/api', function () use ($app) {
         $app->get('/consultationsSchedule', "TeacherController:getUserConsultations");
         $app->get('/currentUser', 'TeacherController:getCurrentUser');
         $app->get('/{id}', "TeacherController:getSingle");
-        $app->post('', "TeacherController:create");
         $app->post('/studentConsultations', 'TeacherController:getStudentConsultations');
-        $app->post('changePassword', "TeacherController:changePassword");
-        $app->delete('removeAccount', "TeacherController:removeAccount");
+        $app->post('/changePassword', "TeacherController:changePassword");
+        $app->post('', "TeacherController:create");
+        $app->delete('/removeAccount', "TeacherController:removeAccount");
         $app->put('/{id}', "TeacherController:update");
     });
 
@@ -34,23 +34,18 @@ $app->group('/api', function () use ($app) {
     });
 
     $app->group('/consultations', function () use ($app) {
-        $app->group('/studentConsultations', function () use ($app) {
-            $app->post('', 'ConsultationController:getStudentConsultations');
-        });
-        $app->get('', 'ConsultationController:getConsultations');
         $app->get('/{id}', "ConsultationController:getSingle");
+        $app->get('', 'ConsultationController:getConsultations');
         $app->post('', "ConsultationController:create");
-
         $app->delete('/{id}', "ConsultationController:delete");
         $app->put('/{id}', "ConsultationController:update");
-
     });
 
     $app->group('/consultationStudents', function () use ($app) {
-        $app->get('', 'ConsultationStudentController:getAll');
-        $app->get('/{id}', "ConsultationStudentController:getSingle");
-        $app->delete('/{id}', "ConsultationStudentController:delete");
-        $app->put('/{id}', "ConsultationStudentController:update");
+        $app->get('', 'StudentConsultationController:getAll');
+        $app->get('/{id}', "StudentConsultationController:getSingle");
+        $app->delete('/{id}', "StudentConsultationController:delete");
+        $app->put('/{id}', "StudentConsultationController:update");
     });
 })->add(new Tuupola\Middleware\JwtAuthentication([
     "path" => "",
