@@ -42,9 +42,9 @@ class StudentConsultationController extends Controller
         $date = new DateTime($data['date']);
         $dateAsString = date('Y-m-d', $date->getTimestamp());
         if ($data['start_time'] >= $data['finish_time'])
-            return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
-        if ($this->checkIfConsultationFitsInTimeRange($data, $dateAsString, $date))
-            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Błędnie podany czas konsultacji']);
+        if (!$this->checkIfConsultationFitsInTimeRange($data, $dateAsString, $date))
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Termin konsultacji jest niedostępny']);
 
         $studentConsultation = new StudentConsultation();
         $studentConsultation->date = $data['date'];
@@ -57,23 +57,28 @@ class StudentConsultationController extends Controller
         $studentConsultation->subject_id = $data['subject_id'];
         $studentConsultation->accepted = false;
         $studentConsultation->save();
-        return $response->withStatus(201)->getBody()->write($studentConsultation->toJson());
+        Utils::sendEmail($studentConsultation->id, $data['teacher_id']);
+        return $response->withStatus(201);
     }
 
     private function checkIfConsultationFitsInTimeRange($data, string $dateAsString, DateTime $date): bool
     {
-        return (StudentConsultation::where('teacher_id', $data['teacher_id'])
+        return ((StudentConsultation::where('teacher_id', $data['teacher_id'])
                     ->where('start_time', '<=', $data['start_time'])
                     ->where("finish_time", ">", $data['start_time'])
-                    ->where('date', '=', $dateAsString)->count() > 0
+                    ->where('date', '=', $dateAsString)->count() == 0
                 || StudentConsultation::where('teacher_id', $data['teacher_id'])
                     ->where('finish_time', '>=', $data['finish_time'])
                     ->where("start_time", "<", $data['finish_time'])
-                    ->where('date', '=', $dateAsString)->count() > 0) ||
-            Consultation::where('teacher_id', $data['teacher_id'])
-                ->where('finish_time', '>=', $data['finish_time'])
-                ->where("start_time", "<=", $data['start_time'])
-                ->where('day', date('w', $date->getTimestamp()))->count() == 0;
+                    ->where('date', '=', $dateAsString)->count() == 0)) &&
+            (Consultation::where('teacher_id', $data['teacher_id'])
+                    ->where('finish_time', '>', $data['start_time'])
+                    ->where("start_time", "<=", $data['start_time'])
+                    ->where('day', date('w', $date->getTimestamp()))->count() == 0 ||
+                Consultation::where('teacher_id', $data['teacher_id'])
+                    ->where('finish_time', '>=', $data['finish_time'])
+                    ->where("start_time", "<", $data['finish_time'])
+                    ->where('day', date('w', $date->getTimestamp()))->count() == 0);
     }
 
     public function delete(Request $request, Response $response, $args)
@@ -91,10 +96,10 @@ class StudentConsultationController extends Controller
         $data = $request->getParsedBody();
         $studentConsultation = StudentConsultation::find($args['id']);
         if ($data['start_time'] >= $data['finish_time'])
-            return $response->withStatus(400)->getBody()->write("Błędnie podany czas konsultacji");
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Błędnie podany czas konsultacji']);
 
         if ($this->checkIfEditedConsultationFitsInTimeRange($studentConsultation, $data)) {
-            return $response->withStatus(400)->getBody()->write("Termin konsultacji niedostępny");
+            return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Termin konsultacji jest niedostępny']);
         }
         $studentConsultation->student_name = $data['student_name'] ?: $studentConsultation->student_name;
         $studentConsultation->student_surname = $data['student_surname'] ?: $studentConsultation->student_surname;
@@ -104,7 +109,7 @@ class StudentConsultationController extends Controller
         $studentConsultation->accepted = true;
         $studentConsultation->date = $data['date'] ?: $studentConsultation->date;
         $studentConsultation->save();
-        return $response->withStatus(201)->getBody()->write($studentConsultation->toJson());
+        return $response->withStatus(201);
     }
 
     private function checkIfEditedConsultationFitsInTimeRange($studentConsultation, $data): bool

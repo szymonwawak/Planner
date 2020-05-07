@@ -4,6 +4,7 @@ import {ApiService} from "../../../shared/api.service";
 import {ConsultationScheme} from "../../../teachers-panel/components/consultations-schedule/consultations-schedule.component";
 import {StudentsConsultation} from "../../../teachers-panel/components/incoming-consultations/incoming-consultations.component";
 import {EventInput} from "@fullcalendar/core/structs/event";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-search-panel',
@@ -12,13 +13,13 @@ import {EventInput} from "@fullcalendar/core/structs/event";
 })
 export class SearchPanelComponent implements OnInit {
 
+  search: string = '';
   subjects: Array<Subject>;
   teachers: Array<Teacher>;
-
   @Input() lessonModel: LessonModel;
-  search: string = '';
+  @Output() onSelect = new EventEmitter<boolean>();
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private utils: UtilsService) {
   }
 
   ngOnInit(): void {
@@ -32,6 +33,28 @@ export class SearchPanelComponent implements OnInit {
     this.search = '';
   }
 
+  getTeachers(): void {
+    this.apiService.getAllTeachers().subscribe(
+      res => {
+        this.teachers = res;
+      },
+      err => {
+        this.utils.openSnackBar(err.error.message);
+      }
+    )
+  }
+
+  getSubjects(): void {
+    this.apiService.getAllSubjects().subscribe(
+      res => {
+        this.subjects = res;
+      },
+      err => {
+        this.utils.openSnackBar(err.error.message);
+      }
+    )
+  }
+
   filterSubjects() {
     if (this.lessonModel.teacher == null)
       return this.subjects;
@@ -43,34 +66,14 @@ export class SearchPanelComponent implements OnInit {
     if (this.lessonModel.subject == null)
       return this.teachers;
     else
-      return this.teachers.filter((item) => item.subjects.find(({name}) => name == this.lessonModel.subject.name));
+      return this.teachers.filter(
+        (item) => item.subjects.find(
+          ({name}) => name == this.lessonModel.subject.name
+        )
+      );
   }
 
-  getTeachers(): void {
-    this.apiService.getAllTeachers().subscribe(
-      res => {
-        this.teachers = res;
-      },
-      err => {
-        alert("Wystąpił błąd");
-      }
-    )
-  }
-
-  getSubjects(): void {
-    this.apiService.getAllSubjects().subscribe(
-      res => {
-        this.subjects = res;
-      },
-      err => {
-        alert("Wystąpił błąd");
-      }
-    )
-  }
-
-  @Output() onSelect = new EventEmitter<boolean>();
-
-  loadCalendar() {
+  loadCalendarIfEverythingIsSet() {
     if (this.lessonModel.teacher) {
       this.onSelect.emit();
     }

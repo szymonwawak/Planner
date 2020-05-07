@@ -1,8 +1,8 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
 import {StudentsConsultation} from "../incoming-consultations/incoming-consultations.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {TimepickerConfig} from "ngx-bootstrap/timepicker";
 import {ApiService} from "../../../shared/api.service";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-edit-students-consultation',
@@ -12,28 +12,25 @@ import {ApiService} from "../../../shared/api.service";
 export class EditStudentsConsultationComponent implements OnInit {
 
   consultation: StudentsConsultation;
-
-  constructor(public dialogRef: MatDialogRef<EditStudentsConsultationComponent>,
-              private apiService: ApiService,
-              @Inject(MAT_DIALOG_DATA) public studentsConsultation: StudentsConsultation) {
-  }
-
-  day: Date = this.studentsConsultation.date;
+  day: Date;
   startTime: Date;
   endTime: Date;
 
+  constructor(public dialogRef: MatDialogRef<EditStudentsConsultationComponent>,
+              private apiService: ApiService,
+              private utils: UtilsService,
+              @Inject(MAT_DIALOG_DATA) public studentsConsultation: StudentsConsultation) {
+  }
+
   ngOnInit(): void {
+    this.day = this.studentsConsultation.date;
     this.startTime = new Date(this.day + ' ' + this.studentsConsultation.start_time);
     this.endTime = new Date(this.day + ' ' + this.studentsConsultation.finish_time);
     this.studentsConsultation.date = new Date(this.day);
   }
 
-  close(): void {
-    this.dialogRef.close();
-  }
-
   save(): void {
-    let consultation: StudentsConsultation = this.studentsConsultation
+    let consultation: StudentsConsultation = this.studentsConsultation;
     consultation.start_time = this.startTime.toLocaleTimeString();
     consultation.finish_time = this.endTime.toLocaleTimeString();
     consultation.date = this.day;
@@ -42,9 +39,13 @@ export class EditStudentsConsultationComponent implements OnInit {
         this.dialogRef.close();
       },
       err => {
-        alert(err.error.message)
+        this.utils.openSnackBar(err.error.message);
       }
     )
+  }
+
+  close(): void {
+    this.dialogRef.close();
   }
 
   checkMinutes(dateTime: Date, field: String): void {

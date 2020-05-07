@@ -2,6 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {Subject} from "../../../students-panel/components/search-panel/search-panel.component";
 import {ApiService} from "../../../shared/api.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-assign-subjects-dialog',
@@ -15,6 +16,7 @@ export class AssignSubjectsDialogComponent implements OnInit {
 
   constructor(private apiService: ApiService,
               public dialogRef: MatDialogRef<AssignSubjectsDialogComponent>,
+              private utils: UtilsService,
               @Inject(MAT_DIALOG_DATA) private userSubjects: Subject[]) {
   }
 
@@ -25,7 +27,7 @@ export class AssignSubjectsDialogComponent implements OnInit {
         this.subjects = this.subjects.filter((el) => !this.userSubjects.find(({id}) => el.id == id));
       },
       err => {
-        alert("Wystąpił błąd");
+        this.utils.openSnackBar(err.error.message);
       }
     );
   }
@@ -40,7 +42,7 @@ export class AssignSubjectsDialogComponent implements OnInit {
         this.dialogRef.close();
       },
       err => {
-        alert("Wystąpił błąd");
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }

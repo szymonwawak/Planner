@@ -5,7 +5,8 @@
   <mat-divider></mat-divider>
   <mat-card-content>
     <mat-selection-list [multiple]="false">
-      <mat-list-option class="h-auto mb-2" *ngFor="let consultationScheme of paginatedSchemes" (click)="setConsultationScheme(consultationScheme)">
+      <mat-list-option class="h-auto mb-2" *ngFor="let consultationScheme of paginatedSchemes"
+                       (click)="setConsultationScheme(consultationScheme)">
         <span><b>Dzień:</b> {{days[consultationScheme.day]}}</span>
         <span><b>Od:</b> {{consultationScheme.start_date}} <b>Do:</b> {{consultationScheme.end_date}}</span>
         <span><b>W godzinach: </b>{{consultationScheme.start_time}} - {{consultationScheme.finish_time}}</span>
@@ -19,7 +20,8 @@
         <mat-icon fontSet="material-icons-outlined ">add</mat-icon>
         Nowy termin
       </button>
-      <button mat-raised-button color="accent" class="mr-3" [disabled]="!consultationScheme" (click)="openEditConsultationSchemeDialog()">
+      <button mat-raised-button color="accent" class="mr-3" [disabled]="!consultationScheme"
+              (click)="openEditConsultationSchemeDialog()">
         <mat-icon fontSet="material-icons-outlined ">create</mat-icon>
         Edytuj
       </button>

@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {StudentsConsultation} from "../incoming-consultations/incoming-consultations.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ApiService} from "../../../shared/api.service";
 import {ConsultationScheme} from "../consultations-schedule/consultations-schedule.component";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-add-consultation-scheme-dialog',
@@ -17,14 +17,11 @@ export class AddConsultationSchemeDialogComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<AddConsultationSchemeDialogComponent>,
               private apiService: ApiService,
+              private utils: UtilsService,
               @Inject(MAT_DIALOG_DATA) public days) {
   }
 
   ngOnInit(): void {
-  }
-
-  close(): void {
-    this.dialogRef.close();
   }
 
   save(): void {
@@ -36,9 +33,13 @@ export class AddConsultationSchemeDialogComponent implements OnInit {
         this.dialogRef.close();
       },
       err => {
-        alert(err.error.message)
+        this.utils.openSnackBar(err.error.message);
       }
     )
+  }
+
+  close(): void {
+    this.dialogRef.close();
   }
 
   checkMinutes(timeFrom: Date): void {

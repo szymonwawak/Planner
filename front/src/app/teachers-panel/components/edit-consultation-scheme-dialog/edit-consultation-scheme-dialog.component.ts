@@ -2,6 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {ConsultationScheme} from "../consultations-schedule/consultations-schedule.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ApiService} from "../../../shared/api.service";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-edit-consultation-scheme-dialog',
@@ -10,23 +11,22 @@ import {ApiService} from "../../../shared/api.service";
 })
 export class EditConsultationSchemeDialogComponent implements OnInit {
 
-  consultationScheme: ConsultationScheme =this.data[0];
-  days = this.data[1];
+  consultationScheme: ConsultationScheme;
+  days;
   startTime: Date;
   endTime: Date;
 
   constructor(public dialogRef: MatDialogRef<EditConsultationSchemeDialogComponent>,
               private apiService: ApiService,
+              private utils: UtilsService,
               @Inject(MAT_DIALOG_DATA) public data) {
   }
 
   ngOnInit(): void {
+    this.consultationScheme = this.data[0];
+    this.days = this.data[1];
     this.startTime = new Date(new Date().toDateString() + ' ' + this.consultationScheme.start_time);
     this.endTime = new Date(new Date().toDateString() + ' ' + this.consultationScheme.finish_time);
-  }
-
-  close(): void {
-    this.dialogRef.close();
   }
 
   save(): void {
@@ -38,9 +38,13 @@ export class EditConsultationSchemeDialogComponent implements OnInit {
         this.dialogRef.close();
       },
       err => {
-        alert(err.error.message)
+        this.utils.openSnackBar(err.error.message);
       }
     )
+  }
+
+  close(): void {
+    this.dialogRef.close();
   }
 
   checkMinutes(timeFrom: Date): void {

@@ -5,6 +5,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddConsultationSchemeDialogComponent} from "../add-consultation-scheme-dialog/add-consultation-scheme-dialog.component";
 import {EditConsultationSchemeDialogComponent} from "../edit-consultation-scheme-dialog/edit-consultation-scheme-dialog.component";
 import {PageEvent} from "@angular/material/paginator";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-consultations-schedule',
@@ -20,9 +21,8 @@ export class ConsultationsScheduleComponent implements OnInit {
   length: number;
   days = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
 
-  constructor(private apiService: ApiService, private dialog: MatDialog) {
+  constructor(private apiService: ApiService, private dialog: MatDialog, private utils: UtilsService) {
   }
-
 
   ngOnInit(): void {
     this.setConsultationSchemes();
@@ -40,9 +40,20 @@ export class ConsultationsScheduleComponent implements OnInit {
         this.length = this.consultationSchemes.length;
       },
       err => {
-        alert(err.error.message);
+        this.utils.openSnackBar(err.error.message);
       }
     )
+  }
+
+  deleteScheme(): void {
+    this.apiService.deleteConsultationScheme(this.consultationScheme.id).subscribe(
+      res => {
+        this.ngOnInit();
+      },
+      err => {
+        this.utils.openSnackBar(err.error.message);
+      }
+    );
   }
 
   openAddConsultationSchemeDialog(): void {
@@ -51,7 +62,9 @@ export class ConsultationsScheduleComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = '450px';
     dialogConfig.data = this.days;
-    this.dialog.open(AddConsultationSchemeDialogComponent, dialogConfig);
+    this.dialog.open(AddConsultationSchemeDialogComponent, dialogConfig).afterClosed().subscribe(
+      () => this.ngOnInit()
+    );
   }
 
   openEditConsultationSchemeDialog(): void {
@@ -62,17 +75,6 @@ export class ConsultationsScheduleComponent implements OnInit {
     dialogConfig.data = [this.consultationScheme, this.days];
     this.dialog.open(EditConsultationSchemeDialogComponent, dialogConfig).afterClosed().subscribe(
       () => this.ngOnInit()
-    );
-  }
-
-  deleteScheme(): void {
-    this.apiService.deleteConsultationScheme(this.consultationScheme.id).subscribe(
-      res => {
-        this.ngOnInit();
-      },
-      err => {
-        alert(err.error.message);
-      }
     );
   }
 

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Teacher} from "../../../students-panel/components/search-panel/search-panel.component";
 import {ApiService} from "../../../shared/api.service";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-change-teacher-data',
@@ -11,7 +12,7 @@ export class ChangeTeacherDataComponent implements OnInit {
 
   teacher: Teacher;
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private utils: UtilsService) {
   }
 
   ngOnInit(): void {
@@ -25,7 +26,7 @@ export class ChangeTeacherDataComponent implements OnInit {
         this.teacher = res;
       },
       err => {
-        alert(err.error.message);
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }
@@ -33,10 +34,10 @@ export class ChangeTeacherDataComponent implements OnInit {
   saveTeacherData(): void {
     this.apiService.updateTeacher(this.teacher).subscribe(
       res => {
-        alert(res.message);
+        this.utils.openSnackBar(res.message);
       },
       err => {
-        alert(err.error.message);
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }

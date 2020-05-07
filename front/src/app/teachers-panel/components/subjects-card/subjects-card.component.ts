@@ -5,6 +5,7 @@ import {Subject} from "../../../students-panel/components/search-panel/search-pa
 import {ApiService} from "../../../shared/api.service";
 import {CreateSubjectDialogComponent} from "../create-subject-dialog/create-subject-dialog.component";
 import {PageEvent} from "@angular/material/paginator";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-subjects-card',
@@ -15,22 +16,22 @@ export class SubjectsCardComponent implements OnInit {
 
   public userSubjects: Subject[];
   public selectedSubject: Subject;
-  paginatedSubjects: Subject[];
+  paginatedUserSubjects: Subject[];
   pageSize: number = 3;
   length: number;
 
-  constructor(private dialog: MatDialog, private apiService: ApiService) {
+  constructor(private dialog: MatDialog, private apiService: ApiService, private utils: UtilsService) {
   }
 
   ngOnInit(): void {
     this.apiService.getCurrentUserSubjects().subscribe(
       res => {
         this.userSubjects = res;
-        this.paginatedSubjects = this.userSubjects.slice(0, this.pageSize)
+        this.paginatedUserSubjects = this.userSubjects.slice(0, this.pageSize)
         this.length = this.userSubjects.length;
       },
       err => {
-        alert("Wystąpił błąd");
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }
@@ -45,12 +46,12 @@ export class SubjectsCardComponent implements OnInit {
         this.ngOnInit();
       },
       err => {
-        alert("Wystąpił błąd");
+        this.utils.openSnackBar(err.error.message);
       }
     );
   }
 
-  openSubjectsDialog(): void {
+  openJoinToSubjectDialog(): void {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
@@ -71,6 +72,6 @@ export class SubjectsCardComponent implements OnInit {
 
   changePage(event: PageEvent): void {
     let offset = event.pageSize * event.pageIndex;
-    this.paginatedSubjects = this.userSubjects.slice(offset, offset + this.pageSize);
+    this.paginatedUserSubjects = this.userSubjects.slice(offset, offset + this.pageSize);
   }
 }

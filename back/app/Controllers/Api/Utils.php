@@ -2,13 +2,10 @@
 
 namespace App\Controllers\Api;
 
-use App\Controllers\Controller;
-use App\Models\Consultation;
 use App\Models\StudentConsultation;
 use App\Models\Teacher;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use App\Models\TeacherSubject;
 use Firebase\JWT\JWT;
 
 
@@ -26,21 +23,15 @@ class Utils
         return $decoded->userId;
     }
 
-    public function sendEmail(Request $request)
+    public function sendEmail($consultationId, $teacherId)
     {
-        $data = $request->getParsedBody();
-        $consultation = Consultation::find($data['consultation_id']);
-        $teacher_subject = $consultation->teacher_subject_id;
-        $email = Teacher::select("email")->whereHas('teacherSubjects', function ($query) use ($teacher_subject) {
-            $query->where("id", $teacher_subject);
-        })->first();
-
-        $to = $email->email;
-        $studentConsultation = StudentConsultation::select("start_time", "finish_time", "data")->where('id', $data['id'])->first();
-
-        $message = "Witaj. Masz nową prośbę o zaakceptowanie terminu konsultacji dnia " . $studentConsultation->data . " od godziny " . $studentConsultation->start_time . " do " . $studentConsultation->finish_time;
-
-        mail($to, "Zmiana terminu konsultacji", $message, 'From: no.replay.konsultacje@gmail.com');
+        $teacher = Teacher::find($teacherId);
+        $to = $teacher->email;
+        $studentConsultation = StudentConsultation::find($consultationId);
+        $message = "Masz nową prośbę o zaakceptowanie terminu konsultacji dnia " .
+            $studentConsultation->data . " od godziny " . $studentConsultation->start_time .
+            " do " . $studentConsultation->finish_time;
+        mail($to, "Nowa konsultacja", $message, 'From: no.replay.konsultacje@gmail.com');
 
     }
 

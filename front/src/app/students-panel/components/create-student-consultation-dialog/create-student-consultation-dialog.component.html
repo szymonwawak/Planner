@@ -1,6 +1,27 @@
-<h2 mat-dialog-title></h2>
-
+<h2 mat-dialog-title>Zapisz się na konsultacje!</h2>
 <mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Imię</mat-label>
+    <input matInput type="text" name="name" required [(ngModel)]="studentsConsultation.student_name" #name="ngModel">
+    <div *ngIf="(name.invalid && name.touched)">
+      <small *ngIf="name.errors?.required" class="text-danger">To pole jest wymagane</small>
+    </div>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Nazwisko</mat-label>
+    <input matInput type="text" name="surname" required [(ngModel)]="studentsConsultation.student_surname"
+           #surname="ngModel">
+    <div *ngIf="(surname.invalid && surname.touched)">
+      <small *ngIf="surname.errors?.required" class="text-danger">To pole jest wymaganey</small>
+    </div>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>E-mail</mat-label>
+    <input matInput type="email" name="mail" required [(ngModel)]="studentsConsultation.student_email" #mail="ngModel">
+    <div *ngIf="(mail.invalid && mail.touched)">
+      <small *ngIf="mail.errors?.required" class="text-danger">Adres jest wymagany</small>
+    </div>
+  </mat-form-field>
   <mat-form-field>
     <label>Data konsultacji</label>
     <input matInput [matDatepicker]="myDatepicker" [value]="date" [required]="true">
@@ -12,7 +33,7 @@
   <timepicker [(ngModel)]="startTime" [minuteStep]="10" [arrowkeys]="true" [showMeridian]="false"
               (ngModelChange)="checkMinutes(startTime, 'start')" required></timepicker>
   <label>Czas zakończenia:</label>
-  <timepicker [(ngModel)]="endTime " [minuteStep]="10" [arrowkeys]="true" [showMeridian]="false"
+  <timepicker [(ngModel)]="endTime" [minuteStep]="10" [arrowkeys]="true" [showMeridian]="false"
               (ngModelChange)="checkMinutes(endTime, 'end')" required></timepicker>
 </mat-dialog-content>
 

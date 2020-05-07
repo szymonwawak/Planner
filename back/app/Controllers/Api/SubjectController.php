@@ -2,7 +2,6 @@
 
 namespace App\Controllers\Api;
 
-
 use App\Controllers\Controller;
 use App\Models\Teacher;
 use Slim\Http\Request;

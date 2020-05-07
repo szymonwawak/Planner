@@ -57,7 +57,7 @@ $container ['ConsultationController'] = function ($container) {
 
     return new App\Controllers\Api\ConsultationController($container);
 };
-$container ['ConsultationStudentController'] = function ($container) {
+$container ['StudentConsultationController'] = function ($container) {
 
     return new App\Controllers\Api\StudentConsultationController($container);
 };

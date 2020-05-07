@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {Teacher} from "../../../students-panel/components/search-panel/search-panel.component";
 import {ApiService} from "../../../shared/api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ConsultationScheme} from "../consultations-schedule/consultations-schedule.component";
 import {PageEvent} from "@angular/material/paginator";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-employees',
@@ -20,7 +20,7 @@ export class EmployeesComponent implements OnInit {
   disabled: boolean = true;
   createUserForm: FormGroup;
 
-  constructor(private apiService: ApiService, private formBuilder: FormBuilder) {
+  constructor(private apiService: ApiService, private formBuilder: FormBuilder, private utils: UtilsService) {
   }
 
   ngOnInit(): void {
@@ -41,7 +41,7 @@ export class EmployeesComponent implements OnInit {
         this.length = this.teachers.length;
       },
       err => {
-        alert(err.error.message);
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }
@@ -60,6 +60,12 @@ export class EmployeesComponent implements OnInit {
     this.clearUser();
   }
 
+  enableInputs() {
+    for (let controlsKey in this.createUserForm.controls) {
+      this.createUserForm.controls[controlsKey].enable();
+    }
+  }
+
   clearUser() {
     this.createUserForm.setValue({
       'name': '',
@@ -75,23 +81,17 @@ export class EmployeesComponent implements OnInit {
     this.teacher = this.createUserForm.value;
     this.apiService.createTeacher(this.teacher).subscribe(
       res => {
-        alert(res.message)
+        this.utils.openSnackBar(res.message);
         this.ngOnInit()
       },
       err => {
-        alert(err.error.message);
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }
 
   dismissCreating() {
     this.ngOnInit()
-  }
-
-  enableInputs() {
-    for (let controlsKey in this.createUserForm.controls) {
-      this.createUserForm.controls[controlsKey].enable();
-    }
   }
 
   disableInputs() {

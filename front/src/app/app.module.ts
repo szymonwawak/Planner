@@ -5,7 +5,6 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {RoleSelectorComponent} from './components/role-selector/role-selector.component';
 import {RouterModule, Routes} from '@angular/router';
-import {CalendarComponent} from './components/calendar/calendar.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from "@angular/material/button";
@@ -23,6 +22,7 @@ import {JWTInterceptor} from "./shared/jwt.interceptor";
 import {AuthGuardService} from "./shared/auth-guard.service";
 import {AuthService} from "./auth/auth.service";
 import {JwtModule} from "@auth0/angular-jwt";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 const appRoutes: Routes = [
   {path: 'planner', component: PlannerViewComponent},
@@ -41,7 +41,6 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     RoleSelectorComponent,
-    CalendarComponent,
   ],
   imports: [
     BrowserModule,
@@ -53,6 +52,7 @@ const appRoutes: Routes = [
     MatButtonModule,
     StudentsPanelModule,
     TeachersPanelModule,
+    MatSnackBarModule,
     FullCalendarModule,
     JwtModule.forRoot({
       config: {

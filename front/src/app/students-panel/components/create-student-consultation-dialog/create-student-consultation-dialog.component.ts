@@ -2,6 +2,8 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {StudentsConsultation} from "../../../teachers-panel/components/incoming-consultations/incoming-consultations.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ApiService} from "../../../shared/api.service";
+import {UtilsService} from "../../../shared/utils.service";
+import {LessonModel} from "../planner-view/planner-view.component";
 
 @Component({
   selector: 'app-create-student-consultation-dialog',
@@ -14,20 +16,21 @@ export class CreateStudentConsultationDialogComponent implements OnInit {
   startTime: Date;
   endTime: Date;
   date: Date;
+  event;
+  lesson: LessonModel;
 
   constructor(public dialogRef: MatDialogRef<CreateStudentConsultationDialogComponent>,
               private apiService: ApiService,
-              @Inject(MAT_DIALOG_DATA) public event) {
+              private utils: UtilsService,
+              @Inject(MAT_DIALOG_DATA) public data) {
   }
 
   ngOnInit(): void {
+    this.event = this.data[0];
+    this.lesson = this.data[1];
     this.startTime = this.event.start;
     this.endTime = this.event.end;
     this.date = this.event.start;
-  }
-
-  close(): void {
-    this.dialogRef.close();
   }
 
   save(): void {
@@ -35,19 +38,20 @@ export class CreateStudentConsultationDialogComponent implements OnInit {
     consultation.start_time = this.startTime.toLocaleTimeString();
     consultation.finish_time = this.endTime.toLocaleTimeString();
     consultation.date = this.date;
-    consultation.teacher_id = 2;
-    consultation.subject_id = 2;
-    consultation.student_name = 'sdasd';
-    consultation.student_surname = 'asdasd';
-    consultation.student_email = 'dasd';
+    consultation.teacher_id = this.lesson.teacher.id;
+    consultation.subject_id = this.lesson.subject.id;
     this.apiService.createStudentConsultation(consultation).subscribe(
       res => {
         this.dialogRef.close();
       },
       err => {
-        alert(err.error.message)
+        this.utils.openSnackBar(err.error.message);
       }
     )
+  }
+
+  close(): void {
+    this.dialogRef.close();
   }
 
   checkMinutes(dateTime: Date, field: String): void {

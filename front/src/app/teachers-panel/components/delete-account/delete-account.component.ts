@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../../shared/api.service";
 import {Router} from "@angular/router";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-delete-account',
@@ -11,7 +12,7 @@ export class DeleteAccountComponent implements OnInit {
 
   confirmed: boolean;
 
-  constructor(private apiService: ApiService, private router: Router) {
+  constructor(private apiService: ApiService, private router: Router, private utils: UtilsService) {
   }
 
   ngOnInit(): void {
@@ -25,7 +26,7 @@ export class DeleteAccountComponent implements OnInit {
       },
       err => {
         let error = err.error;
-        alert(error.message);
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }

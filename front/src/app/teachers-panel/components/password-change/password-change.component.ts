@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../../shared/api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-password-change',
@@ -10,10 +11,9 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 export class PasswordChangeComponent implements OnInit {
 
   passwordChangeForm: FormGroup;
-
   passwordChangeModel: PasswordChangeModel;
 
-  constructor(private apiService: ApiService, private formBuilder: FormBuilder) {
+  constructor(private apiService: ApiService, private formBuilder: FormBuilder, private utils: UtilsService) {
   }
 
   ngOnInit(): void {
@@ -45,11 +45,11 @@ export class PasswordChangeComponent implements OnInit {
     this.passwordChangeModel = this.passwordChangeForm.value;
     this.apiService.changePassword(this.passwordChangeModel).subscribe(
       res => {
-        alert(res.message);
+        this.utils.openSnackBar(res.message);
         this.ngOnInit();
       },
       err => {
-        alert(err.error.message);
+        this.utils.openSnackBar(err.error.message);
         this.ngOnInit();
       })
   }
@@ -65,11 +65,9 @@ export function MustMatch(newPassword: string, passwordConfirmation: string) {
   return (formGroup: FormGroup) => {
     const control = formGroup.controls[newPassword];
     const matchingControl = formGroup.controls[passwordConfirmation];
-
     if (matchingControl.errors && !matchingControl.errors.mustMatch) {
       return;
     }
-
     if (control.value !== matchingControl.value) {
       matchingControl.setErrors({mustMatch: true});
     } else {

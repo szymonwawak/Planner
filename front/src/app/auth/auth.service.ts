@@ -16,6 +16,10 @@ export class AuthService {
     return this.http.post<any>(this.loginUrl, user);
   }
 
+  logout() {
+    localStorage.removeItem('token');
+  }
+
   public isAuthenticated(): boolean {
     const token = localStorage.getItem('token');
     return !this.jwtHelper.isTokenExpired(token);

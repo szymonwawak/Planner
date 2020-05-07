@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../auth.service";
 import {Router} from "@angular/router";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class LoginComponent implements OnInit {
     password: ''
   };
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router, private utils: UtilsService) {
   }
 
   ngOnInit(): void {
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/panel/dashboard'])
         }
       },
-      err => alert('Wprowadzono błędne dane!')
+      err => this.utils.openSnackBar(err.error.message)
     )
   }
 }

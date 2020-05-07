@@ -65,7 +65,7 @@ $app->group('/api', function () use ($app) {
     $app->get('/teachers', "TeacherController:getAll");
     $app->get('/subjects', 'SubjectController:getAll');
     $app->post('/consultations/consultationsById', "ConsultationController:getByTeacherId");
-    $app->post('/consultationStudents/consultationsById', "ConsultationStudentController:getByTeacherId");
-    $app->post('/consultationStudents', "ConsultationStudentController:create");
+    $app->post('/consultationStudents/consultationsById', "StudentConsultationController:getByTeacherId");
+    $app->post('/consultationStudents', "StudentConsultationController:create");
 });
 

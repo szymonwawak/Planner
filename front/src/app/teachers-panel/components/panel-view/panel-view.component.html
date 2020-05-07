@@ -1,7 +1,9 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row class="navbar">
-    <span class="mr-auto">Planer konsultacji V1.0</span>
-    <button mat-raised-button color="accent" class="button" routerLink="/logout">Wyloguj</button>
+    <span class="mr-auto">Planer konsultacji</span>
+    <button mat-raised-button color="warn" [hidden]="!authService.isAuthenticated()" class="button"
+            routerLink="/logout" (click)="authService.logout()">Wyloguj
+    </button>
   </mat-toolbar-row>
 </mat-toolbar>
 <mat-sidenav-container class="sidenav-container">

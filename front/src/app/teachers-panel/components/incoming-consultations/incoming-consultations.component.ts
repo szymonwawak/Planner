@@ -2,10 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../../shared/api.service";
 import {Subject} from "../../../students-panel/components/search-panel/search-panel.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {CreateSubjectDialogComponent} from "../create-subject-dialog/create-subject-dialog.component";
 import {EditStudentsConsultationComponent} from "../edit-students-consultation/edit-students-consultation.component";
-import {ConsultationScheme} from "../consultations-schedule/consultations-schedule.component";
 import {PageEvent} from "@angular/material/paginator";
+import {UtilsService} from "../../../shared/utils.service";
 
 @Component({
   selector: 'app-incoming-consultations',
@@ -17,13 +16,12 @@ export class IncomingConsultationsComponent implements OnInit {
   public studentsConsultations: StudentsConsultation[];
   public studentsConsultation: StudentsConsultation;
   paginatedStudentConsultations: StudentsConsultation[];
+  consultationDateRange: DateRange = new DateRange();
   pageSize: number = 8;
   length: number;
 
-  constructor(private apiService: ApiService, private dialog: MatDialog) {
+  constructor(private apiService: ApiService, private dialog: MatDialog, private utils: UtilsService) {
   }
-
-  model: Dates = new Dates();
 
   ngOnInit(): void {
     this.setConsultations();
@@ -38,17 +36,16 @@ export class IncomingConsultationsComponent implements OnInit {
       lastDay.setMonth(lastDay.getMonth() + 1);
       lastDay.setDate(0);
     }
-
-    this.model.start_date = today.toDateString();
-    this.model.end_date = lastDay.toDateString();
-    this.apiService.getCurrentUserStudentsConsultations(this.model).subscribe(
+    this.consultationDateRange.start_date = today.toDateString();
+    this.consultationDateRange.end_date = lastDay.toDateString();
+    this.apiService.getCurrentUserStudentsConsultations(this.consultationDateRange).subscribe(
       res => {
         this.studentsConsultations = res;
         this.paginatedStudentConsultations = this.studentsConsultations.slice(0, this.pageSize)
         this.length = this.studentsConsultations.length;
       },
       err => {
-        alert(err.error.message);
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }
@@ -65,7 +62,7 @@ export class IncomingConsultationsComponent implements OnInit {
         this.setConsultations();
       },
       err => {
-        alert('Wystąpił błąd')
+        this.utils.openSnackBar(err.error.message);
       }
     )
   }
@@ -85,7 +82,7 @@ export class IncomingConsultationsComponent implements OnInit {
   }
 }
 
-export class Dates {
+export class DateRange {
   start_date: String;
   end_date: String;
 }
@@ -100,6 +97,6 @@ export class StudentsConsultation {
   finish_time: string;
   accepted: boolean;
   subject: Subject;
-  teacher_id: number;
-  subject_id: number;
+  teacher_id: string;
+  subject_id: string;
 }
