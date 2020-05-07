@@ -12,9 +12,11 @@ import {UtilsService} from "../../../shared/utils.service";
 export class EditStudentsConsultationComponent implements OnInit {
 
   consultation: StudentsConsultation;
+  studentsConsultationCopy: StudentsConsultation;
   day: Date;
   startTime: Date;
   endTime: Date;
+  date: Date;
 
   constructor(public dialogRef: MatDialogRef<EditStudentsConsultationComponent>,
               private apiService: ApiService,
@@ -23,14 +25,14 @@ export class EditStudentsConsultationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.day = this.studentsConsultation.date;
-    this.startTime = new Date(this.day + ' ' + this.studentsConsultation.start_time);
-    this.endTime = new Date(this.day + ' ' + this.studentsConsultation.finish_time);
-    this.studentsConsultation.date = new Date(this.day);
+    this.studentsConsultationCopy = {...this.studentsConsultation};
+    this.day = new Date(this.studentsConsultationCopy.date);
+    this.startTime = new Date(this.day.toDateString() + ' ' + this.studentsConsultationCopy.start_time);
+    this.endTime = new Date(this.day.toDateString() + ' ' + this.studentsConsultationCopy.finish_time);
   }
 
   save(): void {
-    let consultation: StudentsConsultation = this.studentsConsultation;
+    let consultation: StudentsConsultation = this.studentsConsultationCopy;
     consultation.start_time = this.startTime.toLocaleTimeString();
     consultation.finish_time = this.endTime.toLocaleTimeString();
     consultation.date = this.day;

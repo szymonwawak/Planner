@@ -67,18 +67,18 @@ class StudentConsultationController extends Controller
                     ->where('start_time', '<=', $data['start_time'])
                     ->where("finish_time", ">", $data['start_time'])
                     ->where('date', '=', $dateAsString)->count() == 0
-                || StudentConsultation::where('teacher_id', $data['teacher_id'])
+                && StudentConsultation::where('teacher_id', $data['teacher_id'])
                     ->where('finish_time', '>=', $data['finish_time'])
                     ->where("start_time", "<", $data['finish_time'])
                     ->where('date', '=', $dateAsString)->count() == 0)) &&
             (Consultation::where('teacher_id', $data['teacher_id'])
                     ->where('finish_time', '>', $data['start_time'])
                     ->where("start_time", "<=", $data['start_time'])
-                    ->where('day', date('w', $date->getTimestamp()))->count() == 0 ||
+                    ->where('day', date('w', $date->getTimestamp()))->count() > 0 &&
                 Consultation::where('teacher_id', $data['teacher_id'])
                     ->where('finish_time', '>=', $data['finish_time'])
                     ->where("start_time", "<", $data['finish_time'])
-                    ->where('day', date('w', $date->getTimestamp()))->count() == 0);
+                    ->where('day', date('w', $date->getTimestamp()))->count() > 0);
     }
 
     public function delete(Request $request, Response $response, $args)
@@ -94,6 +94,7 @@ class StudentConsultationController extends Controller
     public function update(Request $request, Response $response, $args)
     {
         $data = $request->getParsedBody();
+        $date = new DateTime($data['date']);
         $studentConsultation = StudentConsultation::find($args['id']);
         if ($data['start_time'] >= $data['finish_time'])
             return $response->withStatus(400)->withJson(['error' => true, 'message' => 'Błędnie podany czas konsultacji']);
@@ -107,8 +108,10 @@ class StudentConsultationController extends Controller
         $studentConsultation->start_time = $data['start_time'] ?: $studentConsultation->start_time;
         $studentConsultation->finish_time = $data['finish_time'] ?: $studentConsultation->finish_time;
         $studentConsultation->accepted = true;
-        $studentConsultation->date = $data['date'] ?: $studentConsultation->date;
+        $studentConsultation->date = $date ?: $studentConsultation->date;
         $studentConsultation->save();
+        if (data['accepted'] != 'true')
+            Utils::sendEmailToStudent($args['id'], $studentConsultation->student_email);
         return $response->withStatus(201);
     }
 

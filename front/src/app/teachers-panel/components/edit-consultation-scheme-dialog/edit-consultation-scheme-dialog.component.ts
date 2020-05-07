@@ -23,14 +23,14 @@ export class EditConsultationSchemeDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.consultationScheme = this.data[0];
+    this.consultationScheme = {...this.data[0]};
     this.days = this.data[1];
     this.startTime = new Date(new Date().toDateString() + ' ' + this.consultationScheme.start_time);
     this.endTime = new Date(new Date().toDateString() + ' ' + this.consultationScheme.finish_time);
   }
 
   save(): void {
-    let scheme: ConsultationScheme = this.consultationScheme
+    let scheme: ConsultationScheme = this.consultationScheme;
     scheme.start_time = this.startTime.toLocaleTimeString();
     scheme.finish_time = this.endTime.toLocaleTimeString();
     this.apiService.updateConsultationScheme(scheme).subscribe(

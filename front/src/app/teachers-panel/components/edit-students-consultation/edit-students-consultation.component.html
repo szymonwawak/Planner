@@ -2,7 +2,7 @@
 <mat-dialog-content>
   <mat-form-field>
     <label>Data konsultacji</label>
-    <input matInput [matDatepicker]="myDatepicker" [value]="day">
+    <input matInput [matDatepicker]="myDatepicker" [(ngModel)]="day">
     <mat-datepicker-toggle matSuffix [for]="myDatepicker"></mat-datepicker-toggle>
     <mat-datepicker #myDatepicker></mat-datepicker>
   </mat-form-field>

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title></h2>
+<h2 mat-dialog-title>Nowy schemat konsultacji</h2>
 <form #f="ngForm">
   <mat-dialog-content>
     <mat-form-field>
@@ -17,7 +17,7 @@
       <mat-label>Dzień tygodnia w który będą odbywać się konsultacje</mat-label>
       <mat-select [(ngModel)]="consultationScheme.day" name="consultationDay" required>
         <mat-option *ngFor="let day of days; let i = index"
-                    [value]="i">{{day}}</mat-option>
+                    [value]="i + 1">{{day}}</mat-option>
       </mat-select>
     </mat-form-field>
     <label>Czas rozpoczęcia:</label>

@@ -81,7 +81,7 @@ export class PlannerViewComponent implements OnInit {
       this.push({
         startRecur: value.start_date,
         endRecur: value.end_date,
-        daysOfWeek: [value.day + 1],
+        daysOfWeek: [value.day],
         startTime: value.start_time,
         endTime: value.finish_time,
         rendering: 'background',

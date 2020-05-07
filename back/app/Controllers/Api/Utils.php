@@ -29,9 +29,20 @@ class Utils
         $to = $teacher->email;
         $studentConsultation = StudentConsultation::find($consultationId);
         $message = "Masz nową prośbę o zaakceptowanie terminu konsultacji dnia " .
-            $studentConsultation->data . " od godziny " . $studentConsultation->start_time .
+            $studentConsultation->date . " od godziny " . $studentConsultation->start_time .
             " do " . $studentConsultation->finish_time;
         mail($to, "Nowa konsultacja", $message, 'From: no.replay.konsultacje@gmail.com');
+
+    }
+
+    public function sendEmailToStudent($consultationId, $email)
+    {
+        $to = $email;
+        $studentConsultation = StudentConsultation::find($consultationId);
+        $message = "Twoja konsultacja została zmodyfikowana. Nowy termin to: " .
+            $studentConsultation->date . " od godziny " . $studentConsultation->start_time .
+            " do " . $studentConsultation->finish_time;
+        mail($to, "Zmiana terminu konsultacji", $message, 'From: no.replay.konsultacje@gmail.com');
 
     }
 

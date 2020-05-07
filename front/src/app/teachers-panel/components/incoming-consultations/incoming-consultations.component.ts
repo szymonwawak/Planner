@@ -73,7 +73,9 @@ export class IncomingConsultationsComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.width = '450px';
     dialogConfig.data = this.studentsConsultation;
-    this.dialog.open(EditStudentsConsultationComponent, dialogConfig);
+    this.dialog.open(EditStudentsConsultationComponent, dialogConfig).afterClosed().subscribe(
+      () => this.ngOnInit()
+    );
   }
 
   changePage(event: PageEvent): void {

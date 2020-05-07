@@ -88,7 +88,6 @@ export class ApiService {
     return this.http.post<any>(this.TEACHERS_URL + '/' + 'studentConsultations', model)
   }
 
-
   changePassword(passwordChangeModel: PasswordChangeModel): Observable<any> {
     return this.http.post<any>(this.TEACHERS_URL + '/changePassword', passwordChangeModel)
   }
